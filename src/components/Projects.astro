@@ -1,0 +1,129 @@
+---
+const projects = [
+  {
+    id: 1,
+    title: "Client Website",
+    description: "Creation of a modern and responsive website for a client, with custom design and optimized user experience.",
+    image: "/GIF.mp4", // Using the GIF from public folder
+    url: "https://mcboutin.fr/", // Real URL to the client website
+    technologies: ["Astro", "Tailwind CSS", "JavaScript", "APIs"],
+    status: "Live"
+  },
+  // You can add other projects here
+  {
+    id: 2,
+    title: "Upcoming Project",
+    description: "More exciting projects coming soon...",
+    image: "/images/coming-soon.jpg",
+    url: "#",
+    technologies: ["React", "Node.js", "TypeScript"],
+    status: "In Development"
+  }
+];
+---
+
+<section class="text-[var(--white)] py-16" id="projects">
+  <div class="max-w-6xl mx-auto space-y-12">
+    <div class="text-center space-y-4">
+      <h2 class="text-3xl md:text-4xl font-medium text-[var(--white)]">
+        My Projects
+      </h2>
+      <div class="w-20 h-1 bg-[var(--sec)] mx-auto rounded-full"></div>
+      <p class="text-lg text-[var(--white-icon)] max-w-2xl mx-auto">
+        Discover my work and the projects I've been involved in
+      </p>
+    </div>
+    
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {projects.map((project) => (
+        <div class="group bg-gradient-to-br from-[var(--white-icon-tr)] to-transparent rounded-lg overflow-hidden border border-[var(--white-icon-tr)] hover:border-[var(--sec)]/50 transition-all duration-300 hover:scale-[1.02]">
+          <div class="relative overflow-hidden">
+            <a 
+              href={project.url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="block relative"
+            >
+              <div class="aspect-[4/3] bg-gradient-to-br from-[var(--sec)]/20 to-[var(--sec)]/5 flex items-center justify-center overflow-hidden">
+                {project.id === 1 ? (
+                  /* Video pour le premier projet */
+                  <video 
+                    src={project.image} 
+                    class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                  />
+                ) : (
+                  /* Placeholder pour les autres projets */
+                  <div class="text-center space-y-1">
+                    <div class="w-12 h-12 bg-[var(--sec)]/30 rounded-lg mx-auto flex items-center justify-center">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--sec)]">
+                        <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                        <line x1="7" y1="2" x2="7" y2="22"></line>
+                        <line x1="17" y1="2" x2="17" y2="22"></line>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <line x1="2" y1="7" x2="7" y2="7"></line>
+                        <line x1="2" y1="17" x2="7" y2="17"></line>
+                        <line x1="17" y1="17" x2="22" y2="17"></line>
+                        <line x1="17" y1="7" x2="22" y2="7"></line>
+                      </svg>
+                    </div>
+                    <p class="text-xs text-[var(--white-icon)]">Project preview</p>
+                  </div>
+                )}
+                {/* 
+                Pour utiliser des images statiques à la place :
+                <img 
+                  src={project.image} 
+                  alt={project.title}
+                  class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                />
+                */}
+              </div>
+              
+              {/* Overlay avec indicateur de lien */}
+              <div class="absolute inset-0 bg-[var(--sec)]/0 group-hover:bg-[var(--sec)]/10 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                <div class="bg-[var(--white)] text-[var(--background)] px-3 py-1.5 rounded-full font-medium flex items-center gap-1.5 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 text-sm">
+                  <span>View project</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M7 17L17 7"></path>
+                    <path d="M7 7h10v10"></path>
+                  </svg>
+                </div>
+              </div>
+            </a>
+          </div>
+          
+          <div class="p-4 space-y-3">
+            <div class="flex items-start justify-between">
+              <h3 class="text-lg font-semibold text-[var(--white)] group-hover:text-[var(--sec)] transition-colors">
+                {project.title}
+              </h3>
+              <span class={`text-xs px-2 py-1 rounded-full font-medium ${
+                project.status === 'Live' 
+                  ? 'bg-green-500/20 text-green-400' 
+                  : 'bg-yellow-500/20 text-yellow-400'
+              }`}>
+                {project.status}
+              </span>
+            </div>
+            
+            <p class="text-sm text-[var(--white-icon)] leading-relaxed">
+              {project.description}
+            </p>
+            
+            <div class="flex flex-wrap gap-1.5">
+              {project.technologies.map((tech) => (
+                <span class="text-xs bg-[var(--sec)]/20 text-[var(--sec)] px-2 py-0.5 rounded-full font-medium">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

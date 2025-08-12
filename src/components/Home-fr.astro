@@ -1,0 +1,56 @@
+---
+import Techs from "./Techs.astro";
+import About from "./About-fr.astro";
+import Projects from "./Projects-fr.astro";
+
+---
+
+<section class="text-[var(--white)] mt-12 md:mt-0" id="home">
+  <div class="max-w-5xl mx-auto space-y-8 md:py-36 pb-14">
+    <div class="text-left space-y-4">
+      <p class="text-md md:text-lg text-[var(--white-icon)] shiny-white">
+        Salut, je suis Jules
+      </p>
+      <div
+        class="flex flex-col lg:flex-row lg:items-center space-y-4 lg:space-y-0 lg:space-x-8 md:gap-4"
+      >
+        <h1
+          class="text-[var(--white)] text-5xl md:text-6xl font-medium text-pretty leading-none"
+        >
+          Développeur <br /> Logiciel & Web
+        </h1>
+        <p class="text-md md:text-2xl text-[var(--white-icon)]">
+            animé par <span class="text-[var(--sec)] shiny-sec">l'innovation technologique</span>, le <span class="text-[var(--sec)] shiny-sec">développement durable</span>, et le <span class="text-[var(--sec)] shiny-sec">travail d'équipe</span>.
+        </p>
+      </div>
+    </div>
+
+    <Techs />
+
+  </div>
+</section>
+
+<About />
+
+<Projects />
+
+<style is:global>
+  .shiny-sec {
+    background: linear-gradient(135deg, #a476ff 25%, #eee5ff 50%, #a476ff 75%);
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shine 3s linear infinite;
+  }
+
+  @keyframes shine {
+    0% {
+      background-position: 100% 50%;
+    }
+    30%,
+    70% {
+      background-position: 0% 50%;
+    }
+  }
+</style>
