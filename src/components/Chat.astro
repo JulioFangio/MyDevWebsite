@@ -61,10 +61,10 @@ const t = content[lang];
           <p class="text-[var(--white-icon)] text-xs">{t.subtitle}</p>
         </div>
       </div>
-      <div class="flex gap-2">
-        <button id="chat-minimize" class="text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors" title="Minimiser">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 12h14"></path>
+      <div class="flex items-center gap-2">
+        <button id="chat-minimize" class="text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors" title="Réduire">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
           </svg>
         </button>
         <button id="chat-close" class="text-[var(--white-icon)] hover:text-red-400 transition-colors" title="Fermer">
@@ -107,26 +107,7 @@ const t = content[lang];
     </div>
   </div>
 
-  <!-- Barre de chat minimisée -->
-  <div 
-    id="chat-minimized" 
-    class="absolute bottom-16 right-0 w-64 h-12 bg-[var(--background)] border border-[var(--white-icon-tr)] rounded-t-lg shadow-lg hidden cursor-pointer hover:bg-[var(--white-icon-tr)]/20 transition-colors"
-  >
-    <div class="flex items-center justify-between p-3">
-      <div class="flex items-center gap-2">
-        <div 
-          class="w-6 h-6 rounded-full overflow-hidden avatar-optimized"
-          style="background-image: url('/images/JulesAvatar-square.png');"
-        ></div>
-        <span id="chat-minimized-title" class="text-[var(--white)] font-medium text-sm">{t.chatLabel}</span>
-      </div>
-      <button id="chat-close-minimized" class="text-[var(--white-icon)] hover:text-red-400 transition-colors" title="Fermer" onclick="event.stopPropagation()">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button>
-    </div>
-  </div>
+
 </div>
 
 <script>
@@ -137,17 +118,16 @@ const t = content[lang];
   }
 
   class ChatWidget {
-    private chatToggle: HTMLElement;
-    private chatModal: HTMLElement;
-    private chatClose: HTMLElement;
-    private chatMinimize: HTMLElement;
-    private messagesContainer: HTMLElement;
-    private chatInput: HTMLInputElement;
-    private chatSend: HTMLElement;
-    private typingIndicator: HTMLElement;
+    private chatToggle!: HTMLElement;
+    private chatModal!: HTMLElement;
+    private chatClose!: HTMLElement;
+    private chatMinimize!: HTMLElement;
+    private messagesContainer!: HTMLElement;
+    private chatInput!: HTMLInputElement;
+    private chatSend!: HTMLElement;
+    private typingIndicator!: HTMLElement;
     private messages: ChatMessage[] = [];
     private isOpen = false;
-    private isMinimized = false;
     private lang: string;
 
     constructor() {
@@ -172,20 +152,12 @@ const t = content[lang];
       this.chatInput = document.getElementById('chat-input') as HTMLInputElement;
       this.chatSend = document.getElementById('chat-send')!;
       this.typingIndicator = document.getElementById('typing-indicator')!;
-      
-      // Éléments de la barre minimisée
-      const chatMinimized = document.getElementById('chat-minimized')!;
-      const chatCloseMinimized = document.getElementById('chat-close-minimized')!;
-      
-      // Événements pour la barre minimisée
-      chatMinimized.addEventListener('click', () => this.restoreChat());
-      chatCloseMinimized.addEventListener('click', (e) => { e.stopPropagation(); this.closeChat(); });
     }
 
     private bindEvents() {
       this.chatToggle.addEventListener('click', () => this.toggleChat());
       this.chatClose.addEventListener('click', () => this.closeChat());
-      this.chatMinimize.addEventListener('click', () => this.minimizeChat());
+      this.chatMinimize.addEventListener('click', () => this.closeChat());
       this.chatSend.addEventListener('click', () => this.sendMessage());
       
       this.chatInput.addEventListener('input', () => {
@@ -223,10 +195,8 @@ const t = content[lang];
 
     public openChat() {
       this.isOpen = true;
-      this.isMinimized = false;
       this.chatModal.classList.remove('hidden');
       this.chatModal.classList.add('flex');
-      document.getElementById('chat-minimized')!.classList.add('hidden');
       this.chatInput.focus();
       this.scrollToBottom();
       this.saveState();
@@ -234,46 +204,20 @@ const t = content[lang];
 
     private closeChat() {
       this.isOpen = false;
-      this.isMinimized = false;
       this.chatModal.classList.add('hidden');
       this.chatModal.classList.remove('flex');
-      document.getElementById('chat-minimized')!.classList.add('hidden');
       this.saveState();
     }
 
-    private minimizeChat() {
-      this.isOpen = false;
-      this.isMinimized = true;
-      this.chatModal.classList.add('hidden');
-      this.chatModal.classList.remove('flex');
-      document.getElementById('chat-minimized')!.classList.remove('hidden');
-      this.saveState();
-    }
 
-    private restoreChat() {
-      if (this.isMinimized) {
-        // Transition du minimisé vers ouvert
-        this.isMinimized = false;
-        this.isOpen = true;
-        document.getElementById('chat-minimized')!.classList.add('hidden');
-        this.chatModal.classList.remove('hidden');
-        this.chatModal.classList.add('flex');
-        this.chatInput.focus();
-        this.scrollToBottom();
-        this.saveState();
-      } else {
-        this.openChat();
-      }
-    }
 
     private saveState() {
       const state = {
         isOpen: this.isOpen,
-        isMinimized: this.isMinimized,
         messages: this.messages
       };
       localStorage.setItem('chatState', JSON.stringify(state));
-      console.log('💾 Chat state saved:', { isOpen: this.isOpen, isMinimized: this.isMinimized });
+      console.log('💾 Chat state saved:', { isOpen: this.isOpen });
     }
 
     private restoreState() {
@@ -282,7 +226,7 @@ const t = content[lang];
         if (savedState) {
           const state = JSON.parse(savedState);
           this.messages = state.messages || [];
-          console.log('🔄 Chat state restored:', { isOpen: state.isOpen, isMinimized: state.isMinimized });
+          console.log('🔄 Chat state restored:', { isOpen: state.isOpen });
           
           // Restaurer les messages dans l'interface
           this.messagesContainer.innerHTML = '';
@@ -292,14 +236,9 @@ const t = content[lang];
             this.displayMessage(msg.role, msg.content);
           });
 
-          // Restaurer l'état d'ouverture ou minimisation
+          // Restaurer l'état d'ouverture
           if (state.isOpen) {
             setTimeout(() => this.openChat(), 100);
-          } else if (state.isMinimized) {
-            this.isMinimized = true;
-            setTimeout(() => {
-              document.getElementById('chat-minimized')!.classList.remove('hidden');
-            }, 100);
           }
         } else {
           // Pas d'état sauvegardé = première visite, ajouter le message d'accueil
