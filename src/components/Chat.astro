@@ -1,0 +1,316 @@
+---
+// Chat Component - Interface pour le jumeau numérique de Jules
+---
+
+<div id="chat-container" class="fixed bottom-6 right-6 z-50">
+  <!-- Chat Button -->
+  <button 
+    id="chat-toggle"
+    class="bg-[var(--sec)] hover:bg-[var(--sec)]/80 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
+    aria-label="Chat avec Jules"
+  >
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+    </svg>
+  </button>
+
+  <!-- Chat Modal -->
+  <div 
+    id="chat-modal" 
+    class="absolute bottom-16 right-0 w-80 h-96 bg-[var(--background)] border border-[var(--white-icon-tr)] rounded-lg shadow-2xl hidden flex-col overflow-hidden"
+  >
+    <!-- Header -->
+    <div class="flex items-center justify-between p-4 border-b border-[var(--white-icon-tr)] bg-gradient-to-r from-[var(--sec)]/10 to-transparent">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-[var(--sec)] rounded-full flex items-center justify-center">
+          <span class="text-white font-bold text-sm">J</span>
+        </div>
+        <div>
+          <h3 class="text-[var(--white)] font-medium">Jules</h3>
+          <p class="text-[var(--white-icon)] text-xs">Jumeau numérique</p>
+        </div>
+      </div>
+      <button id="chat-close" class="text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Messages Container -->
+    <div id="messages-container" class="flex-1 p-4 overflow-y-auto space-y-3 bg-[var(--background)]">
+      <!-- Message d'accueil -->
+      <div class="flex gap-3">
+        <div class="w-6 h-6 bg-[var(--sec)] rounded-full flex items-center justify-center flex-shrink-0">
+          <span class="text-white text-xs font-bold">J</span>
+        </div>
+        <div class="bg-[var(--white-icon-tr)] text-[var(--white)] p-3 rounded-lg rounded-tl-none max-w-[80%]">
+          <p class="text-sm">Salut ! Je suis le jumeau numérique de Jules. Posez-moi des questions sur ses compétences, projets ou expériences ! 😊</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="p-4 border-t border-[var(--white-icon-tr)] bg-[var(--background)]">
+      <div class="flex gap-2">
+        <input 
+          id="chat-input"
+          type="text" 
+          placeholder="Posez votre question..."
+          class="flex-1 bg-[var(--white-icon-tr)] text-[var(--white)] px-3 py-2 rounded-lg text-sm border border-transparent focus:border-[var(--sec)] focus:outline-none"
+          maxlength="200"
+        />
+        <button 
+          id="chat-send"
+          class="bg-[var(--sec)] hover:bg-[var(--sec)]/80 text-white px-3 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="flex justify-between items-center mt-2">
+        <p class="text-[var(--white-icon)] text-xs">Appuyez sur Entrée pour envoyer</p>
+        <div id="typing-indicator" class="text-[var(--sec)] text-xs hidden">Jules écrit...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  interface ChatMessage {
+    role: 'user' | 'assistant';
+    content: string;
+    timestamp?: string;
+  }
+
+  class ChatWidget {
+    private chatToggle: HTMLElement;
+    private chatModal: HTMLElement;
+    private chatClose: HTMLElement;
+    private messagesContainer: HTMLElement;
+    private chatInput: HTMLInputElement;
+    private chatSend: HTMLElement;
+    private typingIndicator: HTMLElement;
+    private messages: ChatMessage[] = [];
+    private isOpen = false;
+
+    constructor() {
+      this.initElements();
+      this.bindEvents();
+    }
+
+    private initElements() {
+      this.chatToggle = document.getElementById('chat-toggle')!;
+      this.chatModal = document.getElementById('chat-modal')!;
+      this.chatClose = document.getElementById('chat-close')!;
+      this.messagesContainer = document.getElementById('messages-container')!;
+      this.chatInput = document.getElementById('chat-input') as HTMLInputElement;
+      this.chatSend = document.getElementById('chat-send')!;
+      this.typingIndicator = document.getElementById('typing-indicator')!;
+    }
+
+    private bindEvents() {
+      this.chatToggle.addEventListener('click', () => this.toggleChat());
+      this.chatClose.addEventListener('click', () => this.closeChat());
+      this.chatSend.addEventListener('click', () => this.sendMessage());
+      
+      this.chatInput.addEventListener('input', () => {
+        this.chatSend.classList.toggle('disabled:opacity-50', !this.chatInput.value.trim());
+        (this.chatSend as HTMLButtonElement).disabled = !this.chatInput.value.trim();
+      });
+
+      this.chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && this.chatInput.value.trim()) {
+          this.sendMessage();
+        }
+      });
+
+      // Fermer en cliquant à l'extérieur
+      document.addEventListener('click', (e) => {
+        if (this.isOpen && !this.chatModal.contains(e.target as Node) && !this.chatToggle.contains(e.target as Node)) {
+          this.closeChat();
+        }
+      });
+    }
+
+    private toggleChat() {
+      if (this.isOpen) {
+        this.closeChat();
+      } else {
+        this.openChat();
+      }
+    }
+
+    public openChat() {
+      this.isOpen = true;
+      this.chatModal.classList.remove('hidden');
+      this.chatModal.classList.add('flex');
+      this.chatInput.focus();
+      this.scrollToBottom();
+    }
+
+    private closeChat() {
+      this.isOpen = false;
+      this.chatModal.classList.add('hidden');
+      this.chatModal.classList.remove('flex');
+    }
+
+    private async sendMessage() {
+      const message = this.chatInput.value.trim();
+      if (!message) return;
+
+      // Ajouter le message utilisateur
+      this.addMessage('user', message);
+      this.chatInput.value = '';
+      (this.chatSend as HTMLButtonElement).disabled = true;
+      this.chatSend.classList.add('disabled:opacity-50');
+
+      // Afficher l'indicateur de frappe
+      this.showTyping();
+
+      try {
+        // Appel à l'API
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message,
+            history: this.messages
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        if (data.success) {
+          // Simuler un délai de réponse
+          setTimeout(() => {
+            this.hideTyping();
+            this.addMessage('assistant', data.message);
+          }, Math.random() * 1000 + 500);
+        } else {
+          throw new Error(data.error || 'Erreur inconnue');
+        }
+
+      } catch (error) {
+        console.error('Erreur chat:', error);
+        this.hideTyping();
+        this.addMessage('assistant', 'Désolé, je rencontre un problème technique. Pouvez-vous réessayer ?');
+      }
+    }
+
+    private addMessage(role: 'user' | 'assistant', content: string) {
+      const message: ChatMessage = { role, content, timestamp: new Date().toISOString() };
+      this.messages.push(message);
+
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'flex gap-3';
+
+      if (role === 'user') {
+        messageDiv.innerHTML = `
+          <div class="flex-1"></div>
+          <div class="bg-[var(--sec)] text-white p-3 rounded-lg rounded-tr-none max-w-[80%]">
+            <p class="text-sm">${this.escapeHtml(content)}</p>
+          </div>
+          <div class="w-6 h-6 bg-[var(--white-icon)] text-[var(--background)] rounded-full flex items-center justify-center flex-shrink-0">
+            <span class="text-xs font-bold">U</span>
+          </div>
+        `;
+      } else {
+        messageDiv.innerHTML = `
+          <div class="w-6 h-6 bg-[var(--sec)] rounded-full flex items-center justify-center flex-shrink-0">
+            <span class="text-white text-xs font-bold">J</span>
+          </div>
+          <div class="bg-[var(--white-icon-tr)] text-[var(--white)] p-3 rounded-lg rounded-tl-none max-w-[80%]">
+            <p class="text-sm">${this.escapeHtml(content)}</p>
+          </div>
+        `;
+      }
+
+      this.messagesContainer.appendChild(messageDiv);
+      this.scrollToBottom();
+    }
+
+    private showTyping() {
+      this.typingIndicator.classList.remove('hidden');
+    }
+
+    private hideTyping() {
+      this.typingIndicator.classList.add('hidden');
+    }
+
+    private scrollToBottom() {
+      setTimeout(() => {
+        this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+      }, 100);
+    }
+
+    private escapeHtml(text: string): string {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  }
+
+  // Initialiser le chat quand le DOM est prêt
+  document.addEventListener('DOMContentLoaded', () => {
+    const chatWidget = new ChatWidget();
+    // Ouvrir automatiquement le chat au chargement
+    setTimeout(() => {
+      chatWidget.openChat();
+    }, 1000); // Délai de 1 seconde pour un effet plus naturel
+  });
+</script>
+
+<style>
+  /* Animation pour le bouton chat */
+  #chat-toggle {
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(164, 118, 255, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 10px rgba(164, 118, 255, 0);
+    }
+  }
+
+  /* Scrollbar personnalisée */
+  #messages-container::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  #messages-container::-webkit-scrollbar-track {
+    background: var(--white-icon-tr);
+  }
+
+  #messages-container::-webkit-scrollbar-thumb {
+    background: var(--sec);
+    border-radius: 2px;
+  }
+
+  /* Animation d'apparition */
+  #chat-modal {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

@@ -17,9 +17,23 @@
         <a href="#about" class="nav-link text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors font-medium">
           About
         </a>
-        <a href="#projects" class="nav-link text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors font-medium">
-          Projects
-        </a>
+        <!-- Projects Dropdown -->
+        <div class="relative group">
+          <button class="nav-link text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors font-medium flex items-center gap-1">
+            Projects
+            <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div class="absolute top-full left-0 mt-2 w-32 bg-[var(--background)] border border-[var(--white-icon-tr)] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+            <a href="#projects-web" class="block px-4 py-2 text-[var(--white-icon)] hover:text-[var(--sec)] hover:bg-[var(--white-icon-tr)] transition-colors">
+              Web
+            </a>
+            <a href="#projects-ai" class="block px-4 py-2 text-[var(--white-icon)] hover:text-[var(--sec)] hover:bg-[var(--white-icon-tr)] transition-colors">
+              AI
+            </a>
+          </div>
+        </div>
         
         <!-- Language Switcher -->
         <div class="flex items-center space-x-2 ml-4 pl-4 border-l border-[var(--white-icon-tr)]">
@@ -54,9 +68,18 @@
         <a href="#about" class="nav-link text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors font-medium">
           About
         </a>
-        <a href="#projects" class="nav-link text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors font-medium">
-          Projects
-        </a>
+        <!-- Mobile Projects Dropdown -->
+        <div class="space-y-2">
+          <span class="text-[var(--white-icon)] font-medium">Projects</span>
+          <div class="pl-4 space-y-2">
+            <a href="#projects-web" class="nav-link block text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors">
+              Web
+            </a>
+            <a href="#projects-ai" class="nav-link block text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors">
+              AI
+            </a>
+          </div>
+        </div>
         
         <!-- Mobile Language Switcher -->
         <div class="flex items-center space-x-2 pt-2 border-t border-[var(--white-icon-tr)]">
