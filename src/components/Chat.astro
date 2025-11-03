@@ -1,17 +1,47 @@
 ---
 // Chat Component - Interface pour le jumeau numérique de Jules
+export interface Props {
+  lang?: 'fr' | 'en';
+}
+
+const { lang = 'en' } = Astro.props;
+
+// Contenu selon la langue
+const content = {
+  fr: {
+    subtitle: "Jumeau numérique",
+    placeholder: "Posez votre question...",
+    sendButton: "Envoyer",
+    enterHint: "Appuyez sur Entrée pour envoyer",
+    typingIndicator: "Jules écrit...",
+    welcomeMessage: "Salut ! Je suis le jumeau numérique de Jules. Posez-moi des questions sur ses compétences, projets ou expériences ! 😊",
+    chatLabel: "Chat avec Jules"
+  },
+  en: {
+    subtitle: "Digital Twin",
+    placeholder: "Ask your question...",
+    sendButton: "Send",
+    enterHint: "Press Enter to send",
+    typingIndicator: "Jules is typing...",
+    welcomeMessage: "Hi! I'm Jules' digital twin. Ask me questions about his skills, projects, or experiences! 😊",
+    chatLabel: "Chat with Jules"
+  }
+};
+
+const t = content[lang];
 ---
 
 <div id="chat-container" class="fixed bottom-6 right-6 z-50">
   <!-- Chat Button -->
   <button 
     id="chat-toggle"
-    class="bg-[var(--sec)] hover:bg-[var(--sec)]/80 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
-    aria-label="Chat avec Jules"
+    class="bg-[var(--sec)] hover:bg-[var(--sec)]/80 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 p-2 border-2 border-white/20"
+    aria-label={t.chatLabel}
   >
-    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-    </svg>
+    <div 
+      class="w-12 h-12 rounded-full overflow-hidden avatar-optimized"
+      style="background-image: url('/images/JulesAvatar-square.png');"
+    ></div>
   </button>
 
   <!-- Chat Modal -->
@@ -22,32 +52,32 @@
     <!-- Header -->
     <div class="flex items-center justify-between p-4 border-b border-[var(--white-icon-tr)] bg-gradient-to-r from-[var(--sec)]/10 to-transparent">
       <div class="flex items-center gap-3">
-        <div class="w-8 h-8 bg-[var(--sec)] rounded-full flex items-center justify-center">
-          <span class="text-white font-bold text-sm">J</span>
-        </div>
+        <div 
+          class="w-9 h-9 rounded-full overflow-hidden avatar-optimized"
+          style="background-image: url('/images/JulesAvatar-square.png');"
+        ></div>
         <div>
           <h3 class="text-[var(--white)] font-medium">Jules</h3>
-          <p class="text-[var(--white-icon)] text-xs">Jumeau numérique</p>
+          <p class="text-[var(--white-icon)] text-xs">{t.subtitle}</p>
         </div>
       </div>
-      <button id="chat-close" class="text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button>
+      <div class="flex gap-2">
+        <button id="chat-minimize" class="text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors" title="Minimiser">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 12h14"></path>
+          </svg>
+        </button>
+        <button id="chat-close" class="text-[var(--white-icon)] hover:text-red-400 transition-colors" title="Fermer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
     </div>
 
     <!-- Messages Container -->
     <div id="messages-container" class="flex-1 p-4 overflow-y-auto space-y-3 bg-[var(--background)]">
-      <!-- Message d'accueil -->
-      <div class="flex gap-3">
-        <div class="w-6 h-6 bg-[var(--sec)] rounded-full flex items-center justify-center flex-shrink-0">
-          <span class="text-white text-xs font-bold">J</span>
-        </div>
-        <div class="bg-[var(--white-icon-tr)] text-[var(--white)] p-3 rounded-lg rounded-tl-none max-w-[80%]">
-          <p class="text-sm">Salut ! Je suis le jumeau numérique de Jules. Posez-moi des questions sur ses compétences, projets ou expériences ! 😊</p>
-        </div>
-      </div>
+      <!-- Les messages seront ajoutés dynamiquement par JavaScript -->
     </div>
 
     <!-- Input Area -->
@@ -56,7 +86,7 @@
         <input 
           id="chat-input"
           type="text" 
-          placeholder="Posez votre question..."
+          placeholder={t.placeholder}
           class="flex-1 bg-[var(--white-icon-tr)] text-[var(--white)] px-3 py-2 rounded-lg text-sm border border-transparent focus:border-[var(--sec)] focus:outline-none"
           maxlength="200"
         />
@@ -71,9 +101,30 @@
         </button>
       </div>
       <div class="flex justify-between items-center mt-2">
-        <p class="text-[var(--white-icon)] text-xs">Appuyez sur Entrée pour envoyer</p>
-        <div id="typing-indicator" class="text-[var(--sec)] text-xs hidden">Jules écrit...</div>
+        <p class="text-[var(--white-icon)] text-xs">{t.enterHint}</p>
+        <div id="typing-indicator" class="text-[var(--sec)] text-xs hidden">{t.typingIndicator}</div>
       </div>
+    </div>
+  </div>
+
+  <!-- Barre de chat minimisée -->
+  <div 
+    id="chat-minimized" 
+    class="absolute bottom-16 right-0 w-64 h-12 bg-[var(--background)] border border-[var(--white-icon-tr)] rounded-t-lg shadow-lg hidden cursor-pointer hover:bg-[var(--white-icon-tr)]/20 transition-colors"
+  >
+    <div class="flex items-center justify-between p-3">
+      <div class="flex items-center gap-2">
+        <div 
+          class="w-6 h-6 rounded-full overflow-hidden avatar-optimized"
+          style="background-image: url('/images/JulesAvatar-square.png');"
+        ></div>
+        <span id="chat-minimized-title" class="text-[var(--white)] font-medium text-sm">{t.chatLabel}</span>
+      </div>
+      <button id="chat-close-minimized" class="text-[var(--white-icon)] hover:text-red-400 transition-colors" title="Fermer" onclick="event.stopPropagation()">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
     </div>
   </div>
 </div>
@@ -89,31 +140,52 @@
     private chatToggle: HTMLElement;
     private chatModal: HTMLElement;
     private chatClose: HTMLElement;
+    private chatMinimize: HTMLElement;
     private messagesContainer: HTMLElement;
     private chatInput: HTMLInputElement;
     private chatSend: HTMLElement;
     private typingIndicator: HTMLElement;
     private messages: ChatMessage[] = [];
     private isOpen = false;
+    private isMinimized = false;
+    private lang: string;
 
     constructor() {
+      // TEMPORAIRE : Forcer le reset pour les tests
+      localStorage.removeItem('chatState');
+      sessionStorage.removeItem('chatState');
+      
+      // Détecter la langue depuis l'URL ou le HTML
+      this.lang = window.location.pathname.includes('/fr') ? 'fr' : 'en';
       this.initElements();
       this.bindEvents();
+      this.restoreState();
+      this.protectNavigation();
     }
 
     private initElements() {
       this.chatToggle = document.getElementById('chat-toggle')!;
       this.chatModal = document.getElementById('chat-modal')!;
       this.chatClose = document.getElementById('chat-close')!;
+      this.chatMinimize = document.getElementById('chat-minimize')!;
       this.messagesContainer = document.getElementById('messages-container')!;
       this.chatInput = document.getElementById('chat-input') as HTMLInputElement;
       this.chatSend = document.getElementById('chat-send')!;
       this.typingIndicator = document.getElementById('typing-indicator')!;
+      
+      // Éléments de la barre minimisée
+      const chatMinimized = document.getElementById('chat-minimized')!;
+      const chatCloseMinimized = document.getElementById('chat-close-minimized')!;
+      
+      // Événements pour la barre minimisée
+      chatMinimized.addEventListener('click', () => this.restoreChat());
+      chatCloseMinimized.addEventListener('click', (e) => { e.stopPropagation(); this.closeChat(); });
     }
 
     private bindEvents() {
       this.chatToggle.addEventListener('click', () => this.toggleChat());
       this.chatClose.addEventListener('click', () => this.closeChat());
+      this.chatMinimize.addEventListener('click', () => this.minimizeChat());
       this.chatSend.addEventListener('click', () => this.sendMessage());
       
       this.chatInput.addEventListener('input', () => {
@@ -127,9 +199,15 @@
         }
       });
 
-      // Fermer en cliquant à l'extérieur
+      // Fermer en cliquant à l'extérieur (mais pas sur les liens de navigation)
       document.addEventListener('click', (e) => {
-        if (this.isOpen && !this.chatModal.contains(e.target as Node) && !this.chatToggle.contains(e.target as Node)) {
+        const target = e.target as Node;
+        const isNavLink = target && (target as HTMLElement).closest('nav, a[href]');
+        
+        if (this.isOpen && 
+            !this.chatModal.contains(target) && 
+            !this.chatToggle.contains(target) && 
+            !isNavLink) {
           this.closeChat();
         }
       });
@@ -145,16 +223,107 @@
 
     public openChat() {
       this.isOpen = true;
+      this.isMinimized = false;
       this.chatModal.classList.remove('hidden');
       this.chatModal.classList.add('flex');
+      document.getElementById('chat-minimized')!.classList.add('hidden');
       this.chatInput.focus();
       this.scrollToBottom();
+      this.saveState();
     }
 
     private closeChat() {
       this.isOpen = false;
+      this.isMinimized = false;
       this.chatModal.classList.add('hidden');
       this.chatModal.classList.remove('flex');
+      document.getElementById('chat-minimized')!.classList.add('hidden');
+      this.saveState();
+    }
+
+    private minimizeChat() {
+      this.isOpen = false;
+      this.isMinimized = true;
+      this.chatModal.classList.add('hidden');
+      this.chatModal.classList.remove('flex');
+      document.getElementById('chat-minimized')!.classList.remove('hidden');
+      this.saveState();
+    }
+
+    private restoreChat() {
+      if (this.isMinimized) {
+        // Transition du minimisé vers ouvert
+        this.isMinimized = false;
+        this.isOpen = true;
+        document.getElementById('chat-minimized')!.classList.add('hidden');
+        this.chatModal.classList.remove('hidden');
+        this.chatModal.classList.add('flex');
+        this.chatInput.focus();
+        this.scrollToBottom();
+        this.saveState();
+      } else {
+        this.openChat();
+      }
+    }
+
+    private saveState() {
+      const state = {
+        isOpen: this.isOpen,
+        isMinimized: this.isMinimized,
+        messages: this.messages
+      };
+      localStorage.setItem('chatState', JSON.stringify(state));
+      console.log('💾 Chat state saved:', { isOpen: this.isOpen, isMinimized: this.isMinimized });
+    }
+
+    private restoreState() {
+      try {
+        const savedState = localStorage.getItem('chatState');
+        if (savedState) {
+          const state = JSON.parse(savedState);
+          this.messages = state.messages || [];
+          console.log('🔄 Chat state restored:', { isOpen: state.isOpen, isMinimized: state.isMinimized });
+          
+          // Restaurer les messages dans l'interface
+          this.messagesContainer.innerHTML = '';
+          
+          // Restaurer tous les messages sauvegardés
+          this.messages.forEach(msg => {
+            this.displayMessage(msg.role, msg.content);
+          });
+
+          // Restaurer l'état d'ouverture ou minimisation
+          if (state.isOpen) {
+            setTimeout(() => this.openChat(), 100);
+          } else if (state.isMinimized) {
+            this.isMinimized = true;
+            setTimeout(() => {
+              document.getElementById('chat-minimized')!.classList.remove('hidden');
+            }, 100);
+          }
+        } else {
+          // Pas d'état sauvegardé = première visite, ajouter le message d'accueil
+          this.addWelcomeMessage();
+        }
+      } catch (error) {
+        console.error('Erreur lors de la restauration du chat:', error);
+        // En cas d'erreur, ajouter le message d'accueil par défaut
+        this.addWelcomeMessage();
+      }
+    }
+
+    private addWelcomeMessage() {
+      const welcomeMsg = this.lang === 'fr'
+        ? "Salut ! Je suis le jumeau numérique de Jules. Posez-moi des questions sur ses compétences, projets ou expériences ! 😊"
+        : "Hi! I'm Jules' digital twin. Ask me questions about his skills, projects, or experiences! 😊";
+      
+      // Ajouter le message à l'historique
+      const message: ChatMessage = { role: 'assistant', content: welcomeMsg, timestamp: new Date().toISOString() };
+      this.messages.push(message);
+      
+      // Afficher le message
+      this.displayMessage('assistant', welcomeMsg);
+      this.saveState();
     }
 
     private async sendMessage() {
@@ -202,14 +371,21 @@
       } catch (error) {
         console.error('Erreur chat:', error);
         this.hideTyping();
-        this.addMessage('assistant', 'Désolé, je rencontre un problème technique. Pouvez-vous réessayer ?');
+        const errorMsg = this.lang === 'fr' 
+          ? 'Désolé, je rencontre un problème technique. Pouvez-vous réessayer ?' 
+          : 'Sorry, I\'m experiencing a technical issue. Can you try again?';
+        this.addMessage('assistant', errorMsg);
       }
     }
 
     private addMessage(role: 'user' | 'assistant', content: string) {
       const message: ChatMessage = { role, content, timestamp: new Date().toISOString() };
       this.messages.push(message);
+      this.displayMessage(role, content);
+      this.saveState();
+    }
 
+    private displayMessage(role: 'user' | 'assistant', content: string) {
       const messageDiv = document.createElement('div');
       messageDiv.className = 'flex gap-3';
 
@@ -252,6 +428,32 @@
       }, 100);
     }
 
+    private protectNavigation() {
+      // Sauvegarder l'état avant les navigations
+      window.addEventListener('beforeunload', () => {
+        this.saveState();
+      });
+
+      // Intercepter les clics sur les liens pour sauvegarder l'état
+      document.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        const link = target.closest('a[href]');
+        
+        if (link && link.getAttribute('href')?.startsWith('/')) {
+          // C'est une navigation interne, sauvegarder l'état
+          this.saveState();
+        }
+      });
+
+      // Écouter les changements de page (pour les SPAs)
+      window.addEventListener('popstate', () => {
+        // Petit délai pour laisser le temps à la page de se charger
+        setTimeout(() => {
+          this.restoreState();
+        }, 100);
+      });
+    }
+
     private escapeHtml(text: string): string {
       const div = document.createElement('div');
       div.textContent = text;
@@ -261,11 +463,7 @@
 
   // Initialiser le chat quand le DOM est prêt
   document.addEventListener('DOMContentLoaded', () => {
-    const chatWidget = new ChatWidget();
-    // Ouvrir automatiquement le chat au chargement
-    setTimeout(() => {
-      chatWidget.openChat();
-    }, 1000); // Délai de 1 seconde pour un effet plus naturel
+    new ChatWidget();
   });
 </script>
 
@@ -273,6 +471,35 @@
   /* Animation pour le bouton chat */
   #chat-toggle {
     animation: pulse 2s infinite;
+  }
+
+  /* Optimisation ultra des avatars - Anti-pixelisation */
+  .avatar-optimized {
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: optimize-contrast;
+    image-rendering: crisp-edges;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    will-change: transform;
+    filter: contrast(1.05) brightness(1.02) saturate(1.1);
+  }
+
+  /* Version lissée pour éviter la pixelisation */
+  .avatar-smooth {
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    image-rendering: auto;
+    image-rendering: smooth;
+    image-rendering: high-quality;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    filter: blur(0.3px) contrast(1.1) brightness(1.05);
+    transform: translateZ(0);
   }
 
   @keyframes pulse {
