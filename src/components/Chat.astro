@@ -279,8 +279,8 @@ const t = content[lang];
       this.showTyping();
 
       try {
-        // Appel à l'API - URL absolue pour compatibilité Netlify
-        const apiUrl = window.location.origin + '/api/chat';
+        // Appel à l'API - Fonction Netlify native
+        const apiUrl = window.location.origin + '/.netlify/functions/chat';
         console.log('🌐 API URL:', apiUrl);
         
         const response = await fetch(apiUrl, {
