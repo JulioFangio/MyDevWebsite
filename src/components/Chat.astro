@@ -279,8 +279,11 @@ const t = content[lang];
       this.showTyping();
 
       try {
-        // Appel à l'API
-        const response = await fetch('/api/chat', {
+        // Appel à l'API - URL absolue pour compatibilité Netlify
+        const apiUrl = window.location.origin + '/api/chat';
+        console.log('🌐 API URL:', apiUrl);
+        
+        const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -291,11 +294,17 @@ const t = content[lang];
           })
         });
 
+        console.log('📡 Response status:', response.status);
+        console.log('📡 Response headers:', Object.fromEntries(response.headers.entries()));
+
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
+          const errorText = await response.text();
+          console.error('❌ API Error Response:', errorText);
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
         }
 
         const data = await response.json();
+        console.log('✅ API Success Response:', data);
         
         if (data.success) {
           // Simuler un délai de réponse
@@ -308,7 +317,11 @@ const t = content[lang];
         }
 
       } catch (error) {
-        console.error('Erreur chat:', error);
+        console.error('❌ Chat API Error:', error);
+        console.error('❌ Error details:', {
+          message: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : 'No stack trace'
+        });
         this.hideTyping();
         const errorMsg = this.lang === 'fr' 
           ? 'Désolé, je rencontre un problème technique. Pouvez-vous réessayer ?' 

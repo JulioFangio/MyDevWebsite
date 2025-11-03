@@ -30,46 +30,76 @@ function getResponse(message: string): string {
 }
 
 export const POST: APIRoute = async ({ request }) => {
+  // Headers CORS pour Netlify
+  const corsHeaders = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  };
+
   try {
-    // Vérification du Content-Type
-    if (!request.headers.get('content-type')?.includes('application/json')) {
+    // Log pour debug Netlify
+    console.log('[Netlify] API Chat called');
+    console.log('[Netlify] Request method:', request.method);
+    console.log('[Netlify] Content-Type:', request.headers.get('content-type'));
+
+    // Vérification du Content-Type (plus permissive pour Netlify)
+    const contentType = request.headers.get('content-type');
+    if (contentType && !contentType.includes('application/json')) {
       return new Response(JSON.stringify({ 
         error: 'Content-Type must be application/json' 
       }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: corsHeaders
       });
     }
 
-    // Parse du body
-    const body = await request.json();
+    // Parse du body avec gestion d'erreur Netlify
+    let body;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      console.error('[Netlify] JSON Parse Error:', parseError);
+      return new Response(JSON.stringify({ 
+        error: 'Invalid JSON format',
+        message: 'Désolé, je rencontre un problème technique. Pouvez-vous réessayer ?'
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
     const { message, history = [] } = body;
+    console.log('[Netlify] Parsed message:', message);
 
     // Validation des données
     if (!message || typeof message !== 'string') {
       return new Response(JSON.stringify({ 
-        error: 'Message is required and must be a string' 
+        error: 'Message is required and must be a string',
+        message: 'Désolé, je rencontre un problème technique. Pouvez-vous réessayer ?'
       }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: corsHeaders
       });
     }
 
     if (!Array.isArray(history)) {
       return new Response(JSON.stringify({ 
-        error: 'History must be an array' 
+        error: 'History must be an array',
+        message: 'Désolé, je rencontre un problème technique. Pouvez-vous réessayer ?'
       }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: corsHeaders
       });
     }
 
     // Traitement avec l'IA mock
-    console.log(`[Chat] User message: ${message}`);
+    console.log(`[Netlify] User message: ${message}`);
     
     const aiResponse = getResponse(message);
     
-    console.log(`[Chat] AI response: ${aiResponse}`);
+    console.log(`[Netlify] AI response: ${aiResponse}`);
 
     // Réponse structurée
     return new Response(JSON.stringify({
@@ -83,16 +113,12 @@ export const POST: APIRoute = async ({ request }) => {
       }
     }), {
       status: 200,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*', // Pour les tests locaux
-        'Access-Control-Allow-Methods': 'POST',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      }
+      headers: corsHeaders
     });
 
   } catch (error) {
-    console.error('[Chat API Error]:', error);
+    console.error('[Netlify API Error]:', error);
+    console.error('[Netlify API Error Stack]:', error instanceof Error ? error.stack : 'No stack trace');
     
     return new Response(JSON.stringify({
       success: false,
@@ -100,7 +126,7 @@ export const POST: APIRoute = async ({ request }) => {
       message: 'Désolé, je rencontre un problème technique. Pouvez-vous réessayer ?'
     }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: corsHeaders
     });
   }
 };
@@ -111,8 +137,9 @@ export const OPTIONS: APIRoute = async () => {
     status: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type'
+      'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '86400'
     }
   });
 };
