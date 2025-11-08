@@ -12,6 +12,7 @@
     "@astrojs/netlify": "^6.6.0",
     "@astrojs/tailwind": "^6.0.2",
     "@langchain/core": "^1.0.2",
+    "@langchain/google-genai": "^1.0.0",
     "@tailwindcss/vite": "^4.1.2",
     "astro": "^5.12.9",
     "langchain": "^1.0.2"

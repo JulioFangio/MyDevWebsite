@@ -1,33 +1,13 @@
 /**
- * API Route - Chat avec le jumeau numérique de Jules
+ * 🤖 API Route - Chat avec Gemini 2.5 Flash Lite
  * Endpoint: POST /api/chat
  */
 
 import type { APIRoute } from 'astro';
+import { julesAI } from '../../lib/julesDigitalTwin.js';
 
 // Force le rendu côté serveur pour cette API
 export const prerender = false;
-
-// Mock responses directement dans l'API
-const mockResponses = {
-  technologies: "Je maîtrise JavaScript, TypeScript, React, Node.js, Astro, Tailwind CSS, HTML5, CSS3, Git, MySQL, APIs REST, Next.js, Vue.js. Mon expertise se concentre particulièrement sur le développement web moderne.",
-  projects: "Actuellement, je travaille sur plusieurs projets passionnants. KodeME est une plateforme de code participatif au tour par tour que je développe avec Astro. J'ai aussi créé le site web mcboutin.fr pour une cliente.",
-  default: "Je peux vous parler de mes compétences techniques, mes projets, ou mon expérience. Que souhaitez-vous savoir ?"
-};
-
-function getResponse(message: string): string {
-  const lowerMessage = message.toLowerCase();
-  
-  if (lowerMessage.includes('techno') || lowerMessage.includes('compétence') || lowerMessage.includes('langage')) {
-    return mockResponses.technologies;
-  }
-  
-  if (lowerMessage.includes('projet') || lowerMessage.includes('réalisation')) {
-    return mockResponses.projects;
-  }
-  
-  return mockResponses.default;
-}
 
 export const POST: APIRoute = async ({ request }) => {
   // Headers CORS pour Netlify
@@ -94,22 +74,57 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    // Traitement avec l'IA mock
-    console.log(`[Netlify] User message: ${message}`);
+    // Détection de langue améliorée
+    const lowerMessage = message.toLowerCase();
     
-    const aiResponse = getResponse(message);
+    // Mots-clés français explicites (ajout de "est" pour "qui est tu")
+    const frenchKeywords = ['qui', 'tu', 'es', 'est', 'sont', 'quoi', 'comment', 'pourquoi', 'où', 'quand', 
+                           'je', 'me', 'mon', 'ma', 'mes', 'le', 'la', 'les', 'de', 'du', 'des', 
+                           'salut', 'bonjour', 'merci', 'oui', 'non', 'avec', 'sans', 'pour', 'sur',
+                           'toi', 'tes', 'ton', 'ta', 'dans', 'sur', 'sous'];
     
-    console.log(`[Netlify] AI response: ${aiResponse}`);
+    // Mots-clés anglais explicites  
+    const englishKeywords = ['what', 'how', 'who', 'where', 'when', 'why', 'hello', 'hi', 'thank', 'yes', 'no',
+                            'the', 'and', 'or', 'but', 'with', 'without', 'for', 'about', 'can', 'will'];
+    
+    // Caractères français
+    const hasFrenchChars = /[àáâäèéêëìíîïòóôöùúûüÿç]/.test(lowerMessage);
+    
+    // Compter les mots-clés
+    const frenchScore = frenchKeywords.filter(word => lowerMessage.includes(word)).length;
+    const englishScore = englishKeywords.filter(word => lowerMessage.includes(word)).length;
+    
+    // Logique de détection améliorée
+    const isEnglish = !hasFrenchChars && 
+                     (englishScore > frenchScore || 
+                      (englishScore > 0 && frenchScore === 0));
+    
+    const language = isEnglish ? 'en' : 'fr';
+    console.log('🌍 Detected language:', language, `(FR: ${frenchScore}, EN: ${englishScore}, French chars: ${hasFrenchChars})`);
 
-    // Réponse structurée
+    // Appel à Gemini 2.5 Flash Lite via LangChain
+    console.log(`🤖 Calling Gemini with message: ${message}`);
+    const startTime = Date.now();
+    
+    const aiResponse = await julesAI.chat(message, history, language);
+    
+    const processingTime = Date.now() - startTime;
+    console.log(`✅ Gemini response received in ${processingTime}ms:`, aiResponse);
+
+    // Réponse structurée avec Gemini
     return new Response(JSON.stringify({
       success: true,
       message: aiResponse,
       timestamp: new Date().toISOString(),
       metadata: {
-        model: 'jules-mock-ai-v1',
-        tokens: message.length + aiResponse.length, // Simulation
-        processing_time: Math.random() * 500 + 200 // 200-700ms simulé
+        model: 'gemini-2.5-flash-lite',
+        powered_by: 'LangChain + Google Gemini',
+        processing_time: processingTime,
+        language_detected: language,
+        tokens: {
+          input: message.length,
+          output: aiResponse.length
+        }
       }
     }), {
       status: 200,
@@ -147,9 +162,11 @@ export const OPTIONS: APIRoute = async () => {
 // Endpoint de debug pour tester l'API
 export const GET: APIRoute = async () => {
   return new Response(JSON.stringify({
-    message: 'Chat API is running!',
+    message: 'Jules Digital Twin API is running!',
     status: 'operational',
-    ai_model: 'jules-mock-ai-v1',
+    ai_model: 'gemini-2.5-flash-lite',
+    powered_by: 'LangChain + Google Gemini',
+    optimization: '4-section intelligent loading',
     endpoints: {
       chat: 'POST /api/chat',
       debug: 'GET /api/chat'
@@ -158,11 +175,12 @@ export const GET: APIRoute = async () => {
       message: 'Quelles technologies tu maîtrises ?',
       history: []
     },
-    available_responses: {
-      technologies: "Triggered by: techno, compétence, langage",
-      projects: "Triggered by: projet, réalisation",
-      default: "Fallback response"
-    }
+    features: [
+      'Multilingual support (FR/EN)',
+      'Intelligent section loading',
+      'Token optimization (20-70% savings)',
+      'Comprehensive knowledge base'
+    ]
   }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' }

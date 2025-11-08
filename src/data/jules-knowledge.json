@@ -169,6 +169,50 @@
         "level": "Avancé",
         "description": "Intégration de modèles de langage, agents intelligents, frameworks IA, Copilot, Cursor"
       }
+    ],
+    "ai_machine_learning": [
+      {
+        "name": "Google Gemini",
+        "level": "Intermédiaire",
+        "experience": "Projet actuel",
+        "description": "Gemini 2.5 Flash Lite pour chatbots conversationnels, intégration via API Google AI"
+      },
+      {
+        "name": "LangChain",
+        "level": "Intermédiaire",
+        "experience": "Projet actuel",
+        "description": "Framework pour applications IA, chaînes de traitement, intégration LLM"
+      },
+      {
+        "name": "Prompt Engineering",
+        "level": "Intermédiaire",
+        "experience": "Projet actuel",
+        "description": "Conception de prompts système, optimisation des réponses IA, personnalisation de personnalité"
+      },
+      {
+        "name": "RAG (Retrieval-Augmented Generation)",
+        "level": "Débutant",
+        "experience": "En apprentissage",
+        "description": "Bases de connaissances JSON, contexte personnalisé pour LLM"
+      },
+      {
+        "name": "AI Integration",
+        "level": "Intermédiaire", 
+        "experience": "Projet actuel",
+        "description": "Intégration d'IA dans applications web, chatbots intelligents, jumeaux numériques"
+      },
+      {
+        "name": "GitHub Copilot",
+        "level": "Avancé",
+        "experience": "1+ année",
+        "description": "Assistant IA pour le développement, génération de code, optimisation de productivité"
+      },
+      {
+        "name": "Cursor AI",
+        "level": "Intermédiaire",
+        "experience": "6+ mois",
+        "description": "IDE avec IA intégrée, refactoring intelligent, développement assisté par IA"
+      }
     ]
   },
 
@@ -501,6 +545,9 @@
 
   "contact": {
     "company": "JDG Freelance",
+    "adress": "40 avenue André Ithurralde, 64500, Saint Jean de Luz",
+    "email": "duvalgirardjules@gmail.com",
+    "phone": "06 85 79 72 97",
     "specialties": ["Intégration IA", "LangChain", "Développement full-stack", "APIs intelligentes"],
     "availability": "Ouvert aux projets d'intégration IA et développement web, mobile et logiciel moderne",
     "collaboration_interests": [
@@ -580,11 +627,11 @@
   "faqs": [
     {
       "question": "Quel est ton parcours de formation ?",
-      "answer": "Je suis autodidacte en développement web depuis 2021. J'apprends en continu grâce à des projets pratiques, de la documentation et des ressources en ligne."
+      "answer": "J'ai suivi une formation rigoureuse à l'École 42, où j'ai acquis des compétences solides en développement et architecture du numérique. J'ai également un double master en ingénierie de projet développement durable et langues étrangères, ce qui m'a permis de développer une approche multidisciplinaire. De plus, je me forme continuellement en autodidacte sur l'intelligence artificielle et les technologies de développement modernes."
     },
     {
       "question": "Quelle est ta spécialité ?",
-      "answer": "Je me spécialise dans le développement web, mobile et logiciel moderne avec JavaScript/TypeScript, React, et les frameworks comme Astro. J'aime créer des expériences numériques performantes et innovantes."
+      "answer": "Je me spécialise dans le développement web, mobile et logiciel moderne avec JavaScript/TypeScript, React, et les frameworks comme Astro. J'aime créer des expériences numériques performantes et innovantes. J'aspire à devenir un expert en intégration d'intelligence artificielle dans ces domaines."
     },
     {
       "question": "Quel type de projets recherches-tu ?",
