@@ -39,7 +39,7 @@ function initializeModel() {
       model = new ChatGoogleGenerativeAI({
         model: "gemini-2.5-flash-lite",
         temperature: 0.7,
-        maxOutputTokens: 750,
+        maxOutputTokens: 500,
         apiKey: apiKey
       });
       console.log('✅ Gemini 2.5 Flash Lite initialized successfully');
@@ -487,10 +487,10 @@ export class JulesDigitalTwin {
     const relevantSections = getRelevantSections(message);
     const totalSections = ['profil', 'technologies', 'projets_experience', 'formation_activites'];
     const tokensEstimate: Record<string, number> = {
-      profil: 750,                  // Profile élargi (base + contact + langues + personality + values + goals + soft_skills + outdoor)
-      technologies: 750,            // Toutes les technologies (frontend, backend, mobile, cloud, AI, DB, tools)
-      projets_experience: 750,      // Projets + expérience pro + associative
-      formation_activites: 750      // Education + travel + FAQs
+      profil: 500,                  // Profile élargi (base + contact + langues + personality + values + goals + soft_skills + outdoor)
+      technologies: 500,            // Toutes les technologies (frontend, backend, mobile, cloud, AI, DB, tools)
+      projets_experience: 500,      // Projets + expérience pro + associative
+      formation_activites: 500      // Education + travel + FAQs
     };
     
     const usedTokens = relevantSections.reduce((sum, section) => sum + (tokensEstimate[section] || 0), 0);
