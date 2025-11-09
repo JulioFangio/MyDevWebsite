@@ -111,11 +111,11 @@
         
         <form 
           class="space-y-6" 
+          id="contact-form-fr"
           name="contact" 
           method="POST" 
           data-netlify="true"
           data-netlify-honeypot="bot-field"
-          onsubmit="return handleFormSubmitFR(event)"
         >
           <input type="hidden" name="form-name" value="contact" />
           <input type="hidden" name="bot-field" style="display: none" />
@@ -189,38 +189,46 @@
 </section>
 
 <script>
-  // Fonction pour gérer la soumission du formulaire français avec redirection vers /succes
-  function handleFormSubmitFR(event: Event): boolean {
-    event.preventDefault();
+  // Script spécifique au formulaire français
+  document.addEventListener('DOMContentLoaded', function() {
+    const formFr = document.getElementById('contact-form-fr') as HTMLFormElement;
     
-    const form = event.target as HTMLFormElement;
-    const formData = new FormData(form);
-    
-    // Convertir FormData en URLSearchParams
-    const urlencoded = new URLSearchParams();
-    formData.forEach((value, key) => {
-      urlencoded.append(key, value.toString());
-    });
-    
-    // Soumettre le formulaire à Netlify
-    fetch('/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: urlencoded.toString()
-    })
-    .then(response => {
-      if (response.ok) {
-        // Rediriger vers notre page de succès française
-        window.location.href = '/succes';
-      } else {
-        throw new Error('Erreur de soumission');
-      }
-    })
-    .catch(error => {
-      console.error('Erreur:', error);
-      alert('Une erreur est survenue. Veuillez réessayer.');
-    });
-    
-    return false; // Empêcher la soumission normale du formulaire
-  }
+    if (formFr) {
+      console.log('🇫🇷 Formulaire français détecté et configuré');
+      
+      formFr.addEventListener('submit', function(event: Event) {
+        event.preventDefault();
+        console.log('🇫🇷 Soumission formulaire français → redirection vers /succes');
+        
+        const form = event.target as HTMLFormElement;
+        const formData = new FormData(form);
+        
+        // Convertir FormData en URLSearchParams
+        const urlencoded = new URLSearchParams();
+        formData.forEach((value, key) => {
+          urlencoded.append(key, value.toString());
+        });
+        
+        // Soumettre le formulaire à Netlify
+        fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: urlencoded.toString()
+        })
+        .then(response => {
+          if (response.ok) {
+            console.log('✅ Formulaire français envoyé, redirection vers /succes');
+            // FORCER la redirection vers la page française
+            window.location.href = '/succes';
+          } else {
+            throw new Error('Erreur de soumission');
+          }
+        })
+        .catch(error => {
+          console.error('Erreur:', error);
+          alert('Une erreur est survenue. Veuillez réessayer.');
+        });
+      });
+    }
+  });
 </script>
