@@ -1,12 +1,11 @@
 ---
     const technologies = [
       "astro",
-      // "vue",
       "react",
       "typeScript",
       "tailwindcss",
-      // "next",
       "nodejs",
+      "gemini",
       "HTML5",
       "CSS3",
       "javaScript",
@@ -47,7 +46,7 @@
             loading="lazy"
           />
           <span class="text-lg font-medium text-[var(--white-icon)]">
-            {tech.charAt(0).toUpperCase() + tech.slice(1)}
+              {tech !== 'gemini' ? tech.charAt(0).toUpperCase() + tech.slice(1) : ''}
           </span>
         </div>
       ))

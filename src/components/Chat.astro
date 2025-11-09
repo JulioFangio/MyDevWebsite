@@ -35,13 +35,10 @@ const t = content[lang];
   <!-- Chat Button -->
   <button 
     id="chat-toggle"
-    class="bg-[var(--sec)] hover:bg-[var(--sec)]/80 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 p-2 border-2 border-white/20"
+    class="rounded-full w-20 h-20 flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-105 border-0 chat-pulse-button overflow-hidden avatar-optimized"
+    style="background-image: url('/images/JulesAvatarIACut.png'); background-size: cover; background-position: center;"
     aria-label={t.chatLabel}
   >
-    <div 
-      class="w-12 h-12 rounded-full overflow-hidden avatar-optimized"
-      style="background-image: url('/images/JulesAvatar-square.png');"
-    ></div>
   </button>
 
   <!-- Chat Modal -->
@@ -54,7 +51,7 @@ const t = content[lang];
       <div class="flex items-center gap-3">
         <div 
           class="w-9 h-9 rounded-full overflow-hidden avatar-optimized"
-          style="background-image: url('/images/JulesAvatar-square.png');"
+          style="background-image: url('/images/JulesAvatarIACut.png');"
         ></div>
         <div>
           <h3 class="text-[var(--white)] font-medium">Jules</h3>
@@ -65,6 +62,11 @@ const t = content[lang];
         <button id="chat-minimize" class="text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors" title="Réduire">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+          </svg>
+        </button>
+        <button id="chat-expand" class="text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors" title="Agrandir">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h16v16H4V4z"></path>
           </svg>
         </button>
         <button id="chat-close" class="text-[var(--white-icon)] hover:text-red-400 transition-colors" title="Fermer">
@@ -122,12 +124,14 @@ const t = content[lang];
     private chatModal!: HTMLElement;
     private chatClose!: HTMLElement;
     private chatMinimize!: HTMLElement;
+    private chatExpand!: HTMLElement;
     private messagesContainer!: HTMLElement;
     private chatInput!: HTMLInputElement;
     private chatSend!: HTMLElement;
     private typingIndicator!: HTMLElement;
     private messages: ChatMessage[] = [];
     private isOpen = false;
+    private isExpanded = false;
     private lang: string;
 
     constructor() {
@@ -148,7 +152,8 @@ const t = content[lang];
       this.chatModal = document.getElementById('chat-modal')!;
       this.chatClose = document.getElementById('chat-close')!;
       this.chatMinimize = document.getElementById('chat-minimize')!;
-      this.messagesContainer = document.getElementById('messages-container')!;
+      this.chatExpand = document.getElementById('chat-expand')!;
+      this.messagesContainer = document.getElementById('messages-container')!
       this.chatInput = document.getElementById('chat-input') as HTMLInputElement;
       this.chatSend = document.getElementById('chat-send')!;
       this.typingIndicator = document.getElementById('typing-indicator')!;
@@ -158,6 +163,7 @@ const t = content[lang];
       this.chatToggle.addEventListener('click', () => this.toggleChat());
       this.chatClose.addEventListener('click', () => this.closeChat());
       this.chatMinimize.addEventListener('click', () => this.closeChat());
+      this.chatExpand.addEventListener('click', () => this.toggleExpanded());
       this.chatSend.addEventListener('click', () => this.sendMessage());
       
       this.chatInput.addEventListener('input', () => {
@@ -197,6 +203,8 @@ const t = content[lang];
       this.isOpen = true;
       this.chatModal.classList.remove('hidden');
       this.chatModal.classList.add('flex');
+      // Arrêter l'animation de tressaillement quand le chat est ouvert
+      document.getElementById('chat-container')?.classList.add('chat-open');
       this.chatInput.focus();
       this.scrollToBottom();
       this.saveState();
@@ -206,18 +214,29 @@ const t = content[lang];
       this.isOpen = false;
       this.chatModal.classList.add('hidden');
       this.chatModal.classList.remove('flex');
+      // Redémarrer l'animation de tressaillement quand le chat est fermé
+      document.getElementById('chat-container')?.classList.remove('chat-open');
       this.saveState();
     }
 
-
+    private toggleExpanded() {
+      this.isExpanded = !this.isExpanded;
+      if (this.isExpanded) {
+        this.chatModal.classList.add('expanded');
+      } else {
+        this.chatModal.classList.remove('expanded');
+      }
+      this.saveState();
+    }
 
     private saveState() {
       const state = {
         isOpen: this.isOpen,
+        isExpanded: this.isExpanded,
         messages: this.messages
       };
       localStorage.setItem('chatState', JSON.stringify(state));
-      console.log('💾 Chat state saved:', { isOpen: this.isOpen });
+      console.log('💾 Chat state saved:', { isOpen: this.isOpen, isExpanded: this.isExpanded });
     }
 
     private restoreState() {
@@ -226,7 +245,8 @@ const t = content[lang];
         if (savedState) {
           const state = JSON.parse(savedState);
           this.messages = state.messages || [];
-          console.log('🔄 Chat state restored:', { isOpen: state.isOpen });
+          this.isExpanded = state.isExpanded || false;
+          console.log('🔄 Chat state restored:', { isOpen: state.isOpen, isExpanded: this.isExpanded });
           
           // Restaurer les messages dans l'interface
           this.messagesContainer.innerHTML = '';
@@ -236,9 +256,17 @@ const t = content[lang];
             this.displayMessage(msg.role, msg.content);
           });
 
+          // Restaurer l'état d'agrandissement
+          if (this.isExpanded) {
+            this.chatModal.classList.add('expanded');
+          }
+
           // Restaurer l'état d'ouverture
           if (state.isOpen) {
             setTimeout(() => this.openChat(), 100);
+          } else {
+            // S'assurer que l'animation fonctionne quand le chat est fermé
+            document.getElementById('chat-container')?.classList.remove('chat-open');
           }
         } else {
           // Pas d'état sauvegardé = première visite, ajouter le message d'accueil
@@ -420,9 +448,14 @@ const t = content[lang];
 </script>
 
 <style>
-  /* Animation pour le bouton chat */
-  #chat-toggle {
-    animation: pulse 2s infinite;
+  /* Animation prononcée de tressaillement pour le bouton chat */
+  .chat-pulse-button {
+    animation: subtle-pulse 1.5s ease-in-out infinite;
+  }
+
+  /* Pause de l'animation quand le chat est ouvert */
+  .chat-open .chat-pulse-button {
+    animation: none !important;
   }
 
   /* Optimisation ultra des avatars - Anti-pixelisation */
@@ -432,35 +465,41 @@ const t = content[lang];
     background-repeat: no-repeat !important;
     image-rendering: -webkit-optimize-contrast;
     image-rendering: optimize-contrast;
-    image-rendering: crisp-edges;
+    image-rendering: auto;
     transform: translateZ(0);
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     will-change: transform;
-    filter: contrast(1.05) brightness(1.02) saturate(1.1);
+    filter: contrast(1.1) brightness(1.05) saturate(1.1);
+    border: none;
   }
 
-  /* Version lissée pour éviter la pixelisation */
-  .avatar-smooth {
-    background-size: cover !important;
-    background-position: center center !important;
-    background-repeat: no-repeat !important;
-    image-rendering: auto;
-    image-rendering: smooth;
-    image-rendering: high-quality;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    filter: blur(0.3px) contrast(1.1) brightness(1.05);
-    transform: translateZ(0);
-  }
-
-  @keyframes pulse {
+  /* Animation de tressaillement prononcée et visible */
+  @keyframes subtle-pulse {
     0%, 100% {
-      box-shadow: 0 0 0 0 rgba(164, 118, 255, 0.4);
+      transform: scale(1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    25% {
+      transform: scale(1.08) rotate(-1deg);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 0 4px rgba(164, 118, 255, 0.5);
     }
     50% {
-      box-shadow: 0 0 0 10px rgba(164, 118, 255, 0);
+      transform: scale(1.12);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 0 6px rgba(164, 118, 255, 0.7);
     }
+    75% {
+      transform: scale(1.08) rotate(1deg);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 0 4px rgba(164, 118, 255, 0.5);
+    }
+  }
+
+  /* Animation au hover plus prononcée */
+  .chat-pulse-button:hover {
+    transform: scale(1.05) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 0 3px rgba(164, 118, 255, 0.3) !important;
+    animation: none !important;
+    transition: all 0.2s ease-out;
   }
 
   /* Scrollbar personnalisée */
@@ -480,6 +519,13 @@ const t = content[lang];
   /* Animation d'apparition */
   #chat-modal {
     animation: slideUp 0.3s ease-out;
+  }
+
+  /* État agrandi du chat (50% plus grand) */
+  #chat-modal.expanded {
+    width: 30rem !important; /* 480px au lieu de 320px */
+    height: 36rem !important; /* 576px au lieu de 384px */
+    transition: width 0.3s ease-out, height 0.3s ease-out;
   }
 
   @keyframes slideUp {

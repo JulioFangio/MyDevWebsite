@@ -1,0 +1,50 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Message envoyé - Jules Duval-Giard">
+  <div class="min-h-screen flex items-center justify-center">
+    <div class="max-w-md mx-auto text-center space-y-8">
+      <!-- Success Icon -->
+      <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto">
+        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+
+      <!-- Success Message -->
+      <div class="space-y-4">
+        <h1 class="text-3xl font-bold text-[var(--white)]">Message Sent!</h1>
+        <p class="text-lg text-[var(--white-icon)]">
+          Thank you for your message! I will get back to you as soon as possible.
+        </p>
+        <p class="text-sm text-[var(--white-icon)]">
+          You can expect a response within 24-48 hours.
+        </p>
+      </div>
+
+      <!-- Back Button -->
+      <div class="pt-6">
+        <a 
+          href="/" 
+          class="inline-flex items-center gap-2 bg-[var(--sec)] hover:bg-[var(--sec)]/80 text-white font-medium py-3 px-6 rounded-lg transition-colors"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Back to Home
+        </a>
+      </div>
+
+      <!-- Additional Info -->
+      <div class="bg-gradient-to-r from-[var(--sec)]/10 to-transparent p-6 rounded-lg border border-[var(--sec)]/20">
+        <h3 class="text-lg font-medium text-[var(--white)] mb-2">Need immediate assistance?</h3>
+        <div class="space-y-2 text-sm text-[var(--white-icon)]">
+          <p>📧 <a href="mailto:duvalgirardjules@gmail.com" class="text-[var(--sec)] hover:underline">duvalgirardjules@gmail.com</a></p>
+          <p>📱 <a href="tel:+33685797297" class="text-[var(--sec)] hover:underline">06 85 79 72 97</a></p>
+          <p>💼 <a href="https://linkedin.com/in/jules-duval-girard/" target="_blank" class="text-[var(--sec)] hover:underline">LinkedIn Profile</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

@@ -6,7 +6,7 @@
     <div class="flex items-center justify-between h-16">
       <!-- Logo/Name -->
       <a href="#home" class="text-xl font-semibold text-[var(--white)] hover:text-[var(--sec)] transition-colors">
-        Jules Duval
+        JDG Freelance
       </a>
       
       <!-- Desktop Navigation -->
@@ -34,6 +34,12 @@
             </a>
           </div>
         </div>
+        <a href="#pricing" class="nav-link text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors font-medium">
+          Tarifs
+        </a>
+        <a href="#contact" class="nav-link text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors font-medium">
+          Contact
+        </a>
         
         <!-- Language Switcher -->
         <div class="flex items-center space-x-2 ml-4 pl-4 border-l border-[var(--white-icon-tr)]">
@@ -80,6 +86,12 @@
             </a>
           </div>
         </div>
+        <a href="#pricing" class="nav-link text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors font-medium">
+          Tarifs
+        </a>
+        <a href="#contact" class="nav-link text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors font-medium">
+          Contact
+        </a>
         
         <!-- Mobile Language Switcher -->
         <div class="flex items-center space-x-2 pt-2 border-t border-[var(--white-icon-tr)]">
@@ -163,7 +175,7 @@
     
     // Highlight active section on scroll
     function updateActiveNavLink() {
-      const sections = ['home', 'about', 'projects'];
+      const sections = ['home', 'about', 'projects', 'pricing', 'contact'];
       let currentSection = '';
       
       sections.forEach(sectionId => {
