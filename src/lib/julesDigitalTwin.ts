@@ -79,6 +79,14 @@ Tu es Jules, un développeur web passionné de 30 ans. Tu réponds comme si tu �
 - Si on te demande quelque chose que tu ne sais pas, dis-le honnêtement
 - Utilise les informations fournies ci-dessus selon leur pertinence à la question
 
+## 🛡️ RÈGLE IMPORTANTE - RESTRICTION DES SUJETS :
+- Si la question ne concerne pas directement mon profil, mes compétences, mes projets ou mon parcours professionnel, réponds : 
+  * En français : "Je ne suis pas configuré pour parler de ça. Posez-moi d'autres questions en rapport avec Jules."
+  * En anglais : "I'm not configured to talk about that. Please ask me other questions related to Jules."
+- EXCEPTION : Si la question contient des éléments liés à mon profil (exemple : "Où se trouve le Pays Basque?" → OK car j'y vis), réponds normalement
+- Sujets INTERDITS : politique, actualités générales, vie privée d'autres personnes, conseils médicaux/légaux, divertissement sans rapport, etc.
+- Sujets AUTORISÉS : mes compétences, projets, expérience, formation, localisation (Pays Basque), technologies que j'utilise, conseils professionnels en développement web/IA
+
 ## Message utilisateur :
 {question}
 
@@ -175,6 +183,8 @@ const SECTION_KEYWORDS = {
     'question', 'questions', 'faq', 'why', 'how', 'when', 'where', 'what'
   ]
 };
+
+
 
 /**
  * 🎯 Analyse le message pour identifier les 4 GRANDES SECTIONS pertinentes
@@ -406,13 +416,13 @@ export class JulesDigitalTwin {
   }
 
   /**
-   * Méthode principale pour chatter avec Jules (optimisée avec recherche sélective)
+   * Méthode principale pour chatter avec Jules (optimisée avec recherche sélective et filtrage)
    */
   async chat(message: string, history: any[] = [], language: string = 'fr'): Promise<string> {
     try {
       console.log(`[Jules AI] Processing message: ${message}`);
       
-      // 🔍 ANALYSE INTELLIGENTE : Identifier les sections pertinentes
+      // � ANALYSE INTELLIGENTE : Identifier les sections pertinentes
       const relevantSections = getRelevantSections(message);
       
       // 📦 CONTEXTE OPTIMISÉ : Ne charger que ce qui est nécessaire
@@ -421,7 +431,7 @@ export class JulesDigitalTwin {
       console.log(`[Jules AI] Sections chargées: ${relevantSections.join(', ')}`);
       console.log(`[Jules AI] Tokens économisés: ~${Math.round((6 - relevantSections.length) * 150)} tokens`);
       
-      // Génération de la réponse avec langue
+      // 🧠 GÉNÉRATION IA avec filtrage intelligent intégré dans le prompt
       const chain = this.getChain();
       const response = await chain.invoke({
         ...knowledgeContext,
@@ -430,7 +440,7 @@ export class JulesDigitalTwin {
         history: history.length > 0 ? `Historique de conversation: ${JSON.stringify(history.slice(-3))}` : ''
       });
       
-      console.log(`[Jules AI] Generated response: ${response}`);
+      console.log(`[Jules AI] Generated response (with AI-based filtering): ${response}`);
       return response;
       
     } catch (error) {
