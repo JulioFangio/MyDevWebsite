@@ -109,8 +109,16 @@
       <div class="bg-gradient-to-br from-[var(--sec)]/5 to-transparent p-8 rounded-xl border border-[var(--white-icon-tr)]">
         <h3 class="text-2xl font-medium text-[var(--white)] mb-6">Send me a message</h3>
         
-        <form class="space-y-6" name="contact" method="POST" action="/success" data-netlify="true">
+        <form 
+          class="space-y-6" 
+          name="contact" 
+          method="POST" 
+          action="/success" 
+          data-netlify="true"
+          data-netlify-honeypot="bot-field"
+        >
           <input type="hidden" name="form-name" value="contact" />
+          <input type="hidden" name="bot-field" style="display: none" />
           <input type="hidden" name="language" value="en" />
           <div class="grid md:grid-cols-2 gap-4">
             <div>

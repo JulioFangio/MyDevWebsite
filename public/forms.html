@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Contact Form</title>
+  <title>Netlify Forms Detection</title>
 </head>
 <body>
-  <!-- Static HTML form for Netlify SSR detection -->
-  <form name="contact" method="POST" data-netlify="true">
+  <!-- Static HTML form for Netlify detection - EXACT copy of Contact forms -->
+  <form 
+    name="contact" 
+    method="POST" 
+    data-netlify="true"
+    data-netlify-honeypot="bot-field"
+  >
     <input type="hidden" name="form-name" value="contact" />
+    <input type="hidden" name="bot-field" />
     <input type="hidden" name="language" />
     <input type="text" name="name" />
     <input type="email" name="email" />

@@ -1,9 +1,13 @@
+[functions]
+  node_bundler = "esbuild"
+
 [build]
   publish = "dist"
   command = "npm run build"
 
-[functions]
-  node_bundler = "esbuild"
+# Configuration pour Netlify Forms
+[[forms]]
+  name = "contact"
 
 [[redirects]]
   from = "/api/*"
