@@ -115,7 +115,7 @@
           method="POST" 
           data-netlify="true"
           data-netlify-honeypot="bot-field"
-          onsubmit="return handleFormSubmit(event, '/success')"
+          onsubmit="return handleFormSubmitEN(event)"
         >
           <input type="hidden" name="form-name" value="contact" />
           <input type="hidden" name="bot-field" style="display: none" />
@@ -189,8 +189,8 @@
 </section>
 
 <script>
-  // Fonction pour gérer la soumission du formulaire avec redirection personnalisée
-  function handleFormSubmit(event: Event, successUrl: string): boolean {
+  // Fonction pour gérer la soumission du formulaire anglais avec redirection vers /success
+  function handleFormSubmitEN(event: Event): boolean {
     event.preventDefault();
     
     const form = event.target as HTMLFormElement;
@@ -210,8 +210,8 @@
     })
     .then(response => {
       if (response.ok) {
-        // Rediriger vers notre page de succès personnalisée
-        window.location.href = successUrl;
+        // Rediriger vers notre page de succès anglaise
+        window.location.href = '/success';
       } else {
         throw new Error('Submission error');
       }
