@@ -5,10 +5,6 @@
   publish = "dist"
   command = "npm run build"
 
-[build]
-  publish = "dist"
-  command = "npm run build"
-
 # Configuration pour Netlify Forms
 [[forms]]
   name = "contact"
