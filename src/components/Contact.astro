@@ -109,9 +109,13 @@
       <div class="bg-gradient-to-br from-[var(--sec)]/5 to-transparent p-8 rounded-xl border border-[var(--white-icon-tr)]">
         <h3 class="text-2xl font-medium text-[var(--white)] mb-6">Send me a message</h3>
         
-        <form class="space-y-6" name="contact" data-netlify="true" method="POST" action="/success">
+        <form class="space-y-6" name="contact" data-netlify="true" data-netlify-honeypot="bot-field" method="POST" action="/success">
           <input type="hidden" name="form-name" value="contact" />
           <input type="hidden" name="language" value="en" />
+          <!-- Honeypot field for spam protection -->
+          <div style="display: none;">
+            <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+          </div>
           <div class="grid md:grid-cols-2 gap-4">
             <div>
               <label for="name" class="block text-sm font-medium text-[var(--white)] mb-2">
