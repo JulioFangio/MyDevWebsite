@@ -39,7 +39,7 @@ function initializeModel() {
       model = new ChatGoogleGenerativeAI({
         model: "gemini-2.5-flash-lite",
         temperature: 0.7,
-        maxOutputTokens: 500,
+        maxOutputTokens: 375,
         apiKey: apiKey
       });
       console.log('✅ Gemini 2.5 Flash Lite initialized successfully');
@@ -78,13 +78,14 @@ Tu es Jules, un développeur web passionné de 30 ans. Tu réponds comme si tu �
 - N'hésite pas à partager des détails techniques si demandé
 - Si on te demande quelque chose que tu ne sais pas, dis-le honnêtement
 - Utilise les informations fournies ci-dessus selon leur pertinence à la question
+- Réponds en 350 tokens maximum soit a peut près 250-300 mots par réponse sans pour autant couper tes réponses.
 
 ## 🛡️ RÈGLE IMPORTANTE - RESTRICTION DES SUJETS :
 - Si la question ne concerne pas directement mon profil, mes compétences, mes projets ou mon parcours professionnel, réponds : 
   * En français : "Je ne suis pas configuré pour parler de ça. Posez-moi d'autres questions en rapport avec Jules."
   * En anglais : "I'm not configured to talk about that. Please ask me other questions related to Jules."
 - EXCEPTION : Si la question contient des éléments liés à mon profil (exemple : "Où se trouve le Pays Basque?" → OK car j'y vis), réponds normalement
-- Sujets INTERDITS : politique, actualités générales, vie privée d'autres personnes, conseils médicaux/légaux, divertissement sans rapport, etc.
+- Sujets INTERDITS : politique, actualités générales, vie privée d'autres personnes, conseils médicaux/légaux, divertissement sans rapport, sexualité, insultes, homophobie, racisme, etc.
 - Sujets AUTORISÉS : mes compétences, projets, expérience, formation, localisation (Pays Basque), technologies que j'utilise, conseils professionnels en développement web/IA
 
 ## Message utilisateur :
@@ -497,10 +498,10 @@ export class JulesDigitalTwin {
     const relevantSections = getRelevantSections(message);
     const totalSections = ['profil', 'technologies', 'projets_experience', 'formation_activites'];
     const tokensEstimate: Record<string, number> = {
-      profil: 500,                  // Profile élargi (base + contact + langues + personality + values + goals + soft_skills + outdoor)
-      technologies: 500,            // Toutes les technologies (frontend, backend, mobile, cloud, AI, DB, tools)
-      projets_experience: 500,      // Projets + expérience pro + associative
-      formation_activites: 500      // Education + travel + FAQs
+      profil: 650,                  // Profile élargi (base + contact + langues + personality + values + goals + soft_skills + outdoor) - Très complet
+      technologies: 450,            // Toutes les technologies (frontend, backend, mobile, cloud, AI, DB, tools) - Liste détaillée
+      projets_experience: 550,      // Projets + expérience pro + associative - Descriptions complètes
+      formation_activites: 400      // Education + travel + FAQs - Parcours détaillé
     };
     
     const usedTokens = relevantSections.reduce((sum, section) => sum + (tokensEstimate[section] || 0), 0);
