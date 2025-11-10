@@ -130,7 +130,7 @@ const SECTION_KEYWORDS = {
     'techno', 'technos', 'technologies', 'technologie', 'langage', 'langages', 'programmation', 'framework',
     'librairie', 'bibliothèque', 'outil', 'outils', 'compétences techniques', 'stack', 'dev', 'développement',
     'frontend', 'backend', 'fullstack', 'base de données', 'bdd', 'mobile', 'web', 'logiciel',
-    'ia', 'intelligence artificielle', 'machine learning', 'ai', 'langchain', 'openai', 'gemini',
+    'ia', 'intelligence artificielle', 'machine learning', 'ai', 'langchain', 'gemini',
     'javascript', 'typescript', 'react', 'astro', 'python', 'node', 'sql', 'docker',
     // Anglais
     'tech', 'technology', 'technologies', 'language', 'languages', 'programming', 'framework', 'frameworks',

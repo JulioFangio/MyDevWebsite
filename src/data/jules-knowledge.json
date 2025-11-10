@@ -224,9 +224,9 @@
       "status": "En développement",
       "description": "Portfolio révolutionnaire intégrant un jumeau numérique IA capable de répondre aux questions sur mon profil, mes compétences et expériences en temps réel",
       "english_description": "Revolutionary portfolio integrating an AI digital twin capable of answering questions about my profile, skills and experiences in real time",
-      "technologies": ["Astro", "TypeScript", "LangChain", "OpenAI API", "Tailwind CSS", "JSON Knowledge Base"],
+      "technologies": ["Astro", "TypeScript", "LangChain", "Gemini 2.5 Flash Lite API", "Tailwind CSS", "JSON Knowledge Base"],
       "technical_approach": {
-        "ai_integration": "LangChain + OpenAI GPT pour traitement conversationnel",
+        "ai_integration": "LangChain + Gemini 2.5 Flash Lite GPT pour traitement conversationnel",
         "knowledge_base": "Base de connaissances JSON structurée avec mon profil complet",
         "architecture": "API Routes Astro avec système de prompt enrichi",
         "frontend": "Chat interface responsive avec auto-ouverture"
@@ -234,7 +234,7 @@
       "highlights": [
         "Jumeau numérique conversationnel de Jules Duval-Girard",
         "CV interactif : les visiteurs peuvent poser des questions sur mon parcours",
-        "Intégration complète LangChain + OpenAI pour réponses personnalisées",
+        "Intégration complète LangChain + Gemini 2.5 Flash Lite pour réponses personnalisées",
         "Base de connaissances exhaustive (formations, expériences, soft skills)",
         "Architecture Astro moderne avec API routes server-side",
         "Système de prompt sophistiqué pour réponses authentiques"
@@ -242,7 +242,7 @@
       "english_highlights": [
         "Conversational digital twin of Jules Duval-Girard", 
         "Interactive CV: visitors can ask questions about my background",
-        "Complete LangChain + OpenAI integration for personalized responses",
+        "Complete LangChain + Gemini 2.5 Flash Lite integration for personalized responses",
         "Comprehensive knowledge base (education, experience, soft skills)",
         "Modern Astro architecture with server-side API routes",
         "Sophisticated prompt system for authentic responses"
@@ -343,7 +343,7 @@
       "focus_areas": [
         "Intelligence Artificielle et Machine Learning",
         "LangChain et intégration de LLM (Large Language Models)",
-        "OpenAI API et développement d'agents conversationnels",
+        "Gemini 2.5 Flash Lite API et développement d'agents conversationnels",
         "Frameworks web modernes (Astro, React, TypeScript)",
         "Développement full-stack moderne",
         "Conteneurisation et DevOps (Docker, Cloud)",
@@ -351,7 +351,7 @@
       ],
       "methodology": "Apprentissage par projets pratiques, veille technologique active, documentation officielle",
       "resources": [
-        "Documentation officielle (OpenAI, LangChain, Astro, React)",
+        "Documentation officielle (Gemini 2.5 Flash Lite, LangChain, Astro, React)",
         "Projets personnels et professionnels",
         "Communautés de développeurs et forums spécialisés",
         "Expérimentation et prototypage continu"
@@ -532,7 +532,7 @@
   "goals": {
     "short_term": [
       "Finaliser l'intégration du jumeau numérique IA dans mon portfolio",
-      "Perfectionner l'utilisation de LangChain + OpenAI pour créer des expériences conversationnelles",
+      "Perfectionner l'utilisation de LangChain + Gemini 2.5 Flash Lite pour créer des expériences conversationnelles",
       "Finaliser la plateforme KodeME",
       "Développer l'activité JDG Freelance avec des projets d'IA intégrée"
     ],
@@ -639,7 +639,7 @@
     },
     {
       "question": "Peux-tu me parler de ton projet de jumeau numérique ?",
-      "answer": "C'est un projet passionnant ! J'intègre LangChain et OpenAI dans mon portfolio Astro pour créer un CV interactif. Les visiteurs peuvent me poser des questions sur mon parcours, mes compétences, mes expériences, et l'IA répond comme si c'était moi. C'est une démonstration concrète de mes capacités en AI Integration Engineering."
+      "answer": "C'est un projet passionnant ! J'intègre LangChain et Gemini 2.5 Flash Lite dans mon portfolio Astro pour créer un CV interactif. Les visiteurs peuvent me poser des questions sur mon parcours, mes compétences, mes expériences, et l'IA répond comme si c'était moi. C'est une démonstration concrète de mes capacités en AI Integration Engineering."
     }
   ]
 }
