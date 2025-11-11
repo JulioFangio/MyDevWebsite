@@ -194,11 +194,9 @@
     const formFr = document.getElementById('contact-form-fr') as HTMLFormElement;
     
     if (formFr) {
-      console.log('🇫🇷 Formulaire français détecté et configuré');
       
       formFr.addEventListener('submit', function(event: Event) {
         event.preventDefault();
-        console.log('🇫🇷 Soumission formulaire français → redirection vers /succes');
         
         const form = event.target as HTMLFormElement;
         const formData = new FormData(form);
@@ -217,7 +215,6 @@
         })
         .then(response => {
           if (response.ok) {
-            console.log('✅ Formulaire français envoyé, redirection vers /succes');
             // FORCER la redirection vers la page française
             window.location.href = '/succes';
           } else {

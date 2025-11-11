@@ -20,11 +20,9 @@ function getGoogleApiKey(): string {
   
   if (!apiKey) {
     console.error('🚨 Google API Key not found in environment variables');
-    console.log('🔍 Available env vars:', Object.keys(process.env).filter(key => key.includes('GOOGLE')));
     throw new Error('Google API Key is required. Please set GOOGLE_API_KEY in Netlify environment variables');
   }
   
-  console.log('✅ Google API Key found:', apiKey.substring(0, 10) + '...');
   return apiKey;
 }
 
@@ -264,16 +262,11 @@ function formatKnowledgeForPrompt(relevantSections: string[] = [], userMessage: 
   const tokensSaved = tokensJSON - tokensTOON;
   const percentageSaved = ((tokensSaved / tokensJSON) * 100).toFixed(1);
   
-  console.log(`[TOON] � Message utilisateur: "${userMessage}"`);
   console.log(`[TOON] �🚀 Sections encodées en TOON : ${Object.keys(sectionsData).join(', ')}`);
   console.log(`[TOON] 📊 Comparaison tokens:`);
   console.log(`  JSON: ${tokensJSON} tokens (~${jsonEquivalent.length} chars)`);
   console.log(`  TOON: ${tokensTOON} tokens (~${toonFormatted.length} chars)`);
   console.log(`  💰 Économisés: ${tokensSaved} tokens (-${percentageSaved}%)`);
-  console.log(`[TOON] 🎯 DONNÉES ENVOYÉES À GEMINI:`);
-  console.log('=====================================');
-  console.log(toonFormatted);
-  console.log('=====================================');
   
   // Retourner le format TOON complet pour chaque section demandée
   const formattedData: any = {};
@@ -346,9 +339,6 @@ export class JulesDigitalTwin {
       // 📦 CONTEXTE OPTIMISÉ : Ne charger que ce qui est nécessaire
       const knowledgeContext = formatKnowledgeForPrompt(relevantSections, message);
       
-      console.log(`[Jules AI] Sections chargées: ${relevantSections.join(', ')}`);
-      console.log(`[Jules AI] Tokens économisés: ~${Math.round((6 - relevantSections.length) * 150)} tokens`);
-      
       // 🧠 GÉNÉRATION IA avec filtrage intelligent intégré dans le prompt
       const chain = this.getChain();
       const response = await chain.invoke({
@@ -358,7 +348,6 @@ export class JulesDigitalTwin {
         history: history.length > 0 ? `Historique de conversation: ${JSON.stringify(history.slice(-3))}` : ''
       });
       
-      console.log(`[Jules AI] Generated response (with AI-based filtering): ${response}`);
       return response;
       
     } catch (error) {

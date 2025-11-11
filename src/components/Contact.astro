@@ -194,11 +194,9 @@
     const formEn = document.getElementById('contact-form-en') as HTMLFormElement;
     
     if (formEn) {
-      console.log('🇺🇸 English form detected and configured');
       
       formEn.addEventListener('submit', function(event: Event) {
         event.preventDefault();
-        console.log('🇺🇸 English form submission → redirecting to /success');
         
         const form = event.target as HTMLFormElement;
         const formData = new FormData(form);
@@ -217,7 +215,6 @@
         })
         .then(response => {
           if (response.ok) {
-            console.log('✅ English form sent, redirecting to /success');
             // FORCER la redirection vers la page anglaise
             window.location.href = '/success';
           } else {

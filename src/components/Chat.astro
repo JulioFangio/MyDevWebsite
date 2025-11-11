@@ -236,7 +236,7 @@ const t = content[lang];
         messages: this.messages
       };
       localStorage.setItem('chatState', JSON.stringify(state));
-      console.log('💾 Chat state saved:', { isOpen: this.isOpen, isExpanded: this.isExpanded });
+
     }
 
     private restoreState() {
@@ -246,7 +246,6 @@ const t = content[lang];
           const state = JSON.parse(savedState);
           this.messages = state.messages || [];
           this.isExpanded = state.isExpanded || false;
-          console.log('🔄 Chat state restored:', { isOpen: state.isOpen, isExpanded: this.isExpanded });
           
           // Restaurer les messages dans l'interface
           this.messagesContainer.innerHTML = '';
@@ -309,7 +308,6 @@ const t = content[lang];
       try {
         // Appel à l'API - Fonction Netlify native
         const apiUrl = window.location.origin + '/.netlify/functions/chat';
-        console.log('🌐 API URL:', apiUrl);
         
         const response = await fetch(apiUrl, {
           method: 'POST',
@@ -322,8 +320,6 @@ const t = content[lang];
           })
         });
 
-        console.log('📡 Response status:', response.status);
-        console.log('📡 Response headers:', Object.fromEntries(response.headers.entries()));
 
         if (!response.ok) {
           const errorText = await response.text();
@@ -332,7 +328,6 @@ const t = content[lang];
         }
 
         const data = await response.json();
-        console.log('✅ API Success Response:', data);
         
         if (data.success) {
           // Simuler un délai de réponse

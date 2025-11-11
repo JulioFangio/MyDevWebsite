@@ -3,7 +3,6 @@ import { julesAI } from '../../src/lib/julesDigitalTwin.js';
 
 export async function handler(event, context) {
   console.log('🚀 Netlify Function called:', event.httpMethod);
-  console.log('🌐 Headers:', JSON.stringify(event.headers, null, 2));
   
   // Headers CORS
   const corsHeaders = {
@@ -48,13 +47,11 @@ export async function handler(event, context) {
   // POST pour le chat avec Gemini
   if (event.httpMethod === 'POST') {
     try {
-      console.log('📨 POST Body:', event.body);
       
       const body = JSON.parse(event.body);
       const { message, history = [] } = body;
 
       console.log('💬 User message:', message);
-      console.log('🔗 History length:', history.length);
 
       // Détection de langue améliorée
       const lowerMessage = message.toLowerCase();
