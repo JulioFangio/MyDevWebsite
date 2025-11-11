@@ -7,6 +7,7 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { RunnableSequence } from "@langchain/core/runnables";
+import { encode } from '@toon-format/toon';
 import julesKnowledge from '../data/jules-knowledge.json';
 
 /**
@@ -211,176 +212,92 @@ function getRelevantSections(message: string): string[] {
 }
 
 /**
- * 📦 Fonction pour formater les données selon les 4 GRANDES SECTIONS
+ * 📦 Fonction pour formater les données selon les 4 GRANDES SECTIONS avec TOON
  */
-function formatKnowledgeForPrompt(relevantSections: string[] = []) {
-  const formattedData: any = {};
+function formatKnowledgeForPrompt(relevantSections: string[] = [], userMessage: string = '') {
+  const sectionsData: any = {};
   
   // 📋 SECTION 1: PROFIL ÉLARGI (toujours incluse)
   if (relevantSections.includes('profil')) {
-    // Profile de base
-    let profilContent = `Je suis ${julesKnowledge.profile.fullName} (${julesKnowledge.profile.name}), ${julesKnowledge.profile.role}.
-Spécialisation: ${julesKnowledge.profile.specialization}
-Localisation: ${julesKnowledge.profile.location} - ${julesKnowledge.profile.location_appreciation}
-Passion: ${julesKnowledge.profile.passion}
-Motto: ${julesKnowledge.profile.motto}
-Traits de personnalité: ${julesKnowledge.profile.personality_traits.join(', ')}`;
-
-    // Contact
-    profilContent += `\n\n🔗 CONTACT:
-Entreprise: ${julesKnowledge.profile.company} (fondée en ${julesKnowledge.profile.company_founded})
-Description: ${julesKnowledge.profile.company_description}
-Email: ${julesKnowledge.profile.contact.email}
-Téléphone: ${julesKnowledge.profile.contact.phone}
-LinkedIn: ${julesKnowledge.profile.contact.linkedin}
-Adresse: ${julesKnowledge.contact?.adress || 'N/A'}
-Spécialités: ${julesKnowledge.contact?.specialties?.join(', ') || 'N/A'}`;
-
-    // Langues  
-    profilContent += `\n\n🌍 LANGUES:
-Français: ${julesKnowledge.languages?.french?.level} - ${julesKnowledge.languages?.french?.description}
-Anglais: ${julesKnowledge.languages?.english?.level} - ${julesKnowledge.languages?.english?.description}
-Espagnol: ${julesKnowledge.languages?.spanish?.level} - ${julesKnowledge.languages?.spanish?.description}`;
-
-    // Personality
-    if (julesKnowledge.personality) {
-      profilContent += `\n\n🧠 PERSONNALITÉ:
-Traits: ${julesKnowledge.personality.traits?.join(', ') || 'N/A'}
-Style de communication: ${julesKnowledge.personality.communication_style || 'N/A'}
-Intérêts: ${julesKnowledge.personality.interests?.join(', ') || 'N/A'}
-Valeurs: ${julesKnowledge.personality.values?.join(', ') || 'N/A'}`;
-    }
-
-    // Values and sustainability
-    if (julesKnowledge.values_and_sustainability) {
-      profilContent += `\n\n🌱 VALEURS & DURABILITÉ:
-Valeurs fondamentales: ${julesKnowledge.values_and_sustainability.core_values?.join(', ') || 'N/A'}
-Approche durabilité: ${julesKnowledge.values_and_sustainability.sustainability_approach || 'N/A'}
-Équilibre vie-travail: ${julesKnowledge.values_and_sustainability.work_life_balance || 'N/A'}`;
-    }
-
-    // Goals
-    if (julesKnowledge.goals) {
-      profilContent += `\n\n🎯 OBJECTIFS:
-Court terme: ${julesKnowledge.goals.short_term?.join(', ') || 'N/A'}
-Long terme: ${julesKnowledge.goals.long_term?.join(', ') || 'N/A'}`;
-    }
-
-    // Soft skills
-    if (julesKnowledge.soft_skills) {
-      const softSkillsFormatted = julesKnowledge.soft_skills
-        .map(category => `${category.category}: ${category.skills.join(', ')}`)
-        .join('\n');
-      profilContent += `\n\n💡 SOFT SKILLS:\n${softSkillsFormatted}`;
-    }
-
-    // Outdoor activities
-    if (julesKnowledge.outdoor_activities) {
-      profilContent += `\n\n🏄 ACTIVITÉS & LOISIRS:
-Sports: ${julesKnowledge.outdoor_activities.sports?.join(', ') || 'N/A'}
-Hobbies: ${julesKnowledge.outdoor_activities.hobbies?.join(', ') || 'N/A'}
-Philosophie: ${julesKnowledge.outdoor_activities.philosophy || 'N/A'}`;
-    }
-
-    formattedData.profil = profilContent;
+    sectionsData.profile_data = {
+      profile: julesKnowledge.profile,
+      contact: julesKnowledge.contact,
+      languages: julesKnowledge.languages,
+      personality: julesKnowledge.personality,
+      values_and_sustainability: julesKnowledge.values_and_sustainability,
+      goals: julesKnowledge.goals,
+      soft_skills: julesKnowledge.soft_skills,
+      outdoor_activities: julesKnowledge.outdoor_activities
+    };
   }
   
   // 🛠️ SECTION 2: TECHNOLOGIES
   if (relevantSections.includes('technologies')) {
-    const allTechnologies = [
-      ...(julesKnowledge.technologies.frontend || []),
-      ...(julesKnowledge.technologies.backend || []),
-      ...(julesKnowledge.technologies.mobile || []),
-      ...(julesKnowledge.technologies.cloud_devops || []),
-      ...(julesKnowledge.technologies.ai_machine_learning || []),
-      ...(julesKnowledge.technologies.databases || [])
-    ].map(tech => `${tech.name} (${tech.level}) - ${tech.description}`)
-     .concat(
-       (julesKnowledge.technologies.tools || []).map(tool => `${tool.name} (${tool.level}) - ${tool.description}`)
-     );
-    
-    formattedData.technologies = `🛠️ MES TECHNOLOGIES:\n${allTechnologies.join('\n')}`;
-  } else {
-    formattedData.technologies = "Technologies disponibles sur demande.";
+    sectionsData.technologies = julesKnowledge.technologies;
   }
   
   // 🚀 SECTION 3: PROJETS & EXPÉRIENCE
   if (relevantSections.includes('projets_experience')) {
-    let projetsExpContent = '';
-    
-    // Projects
-    if (julesKnowledge.projects) {
-      const projectsFormatted = julesKnowledge.projects
-        .map(project => `📁 ${project.name} (${project.status}): ${project.description}
-Technologies: ${project.technologies ? project.technologies.join(', ') : 'N/A'}
-Type: ${project.type || 'N/A'}`)
-        .join('\n\n');
-      projetsExpContent += `🚀 MES PROJETS:\n${projectsFormatted}`;
-    }
-
-    // Experience professionnelle
-    if (julesKnowledge.experience) {
-      const experienceFormatted = julesKnowledge.experience
-        .map(exp => `🏢 ${exp.company || exp.institution}: ${exp.role} (${exp.period})
-${exp.description}
-Technologies: ${exp.technologies ? exp.technologies.join(', ') : 'N/A'}
-Réalisations: ${exp.achievements ? exp.achievements.join(', ') : 'N/A'}`)
-        .join('\n\n');
-      projetsExpContent += `\n\n💼 EXPÉRIENCE PROFESSIONNELLE:\n${experienceFormatted}`;
-    }
-
-    // Associative experience
-    if (julesKnowledge.associative_experience) {
-      const associativeFormatted = julesKnowledge.associative_experience
-        .map(exp => `🤝 ${exp.organization} (${exp.location}): ${exp.role}
-${exp.description}`)
-        .join('\n');
-      projetsExpContent += `\n\n🤝 EXPÉRIENCE ASSOCIATIVE:\n${associativeFormatted}`;
-    }
-
-    formattedData.projets_experience = projetsExpContent;
-  } else {
-    formattedData.projets_experience = "Projets et expérience disponibles sur demande.";
+    sectionsData.projects_experience = {
+      projects: julesKnowledge.projects,
+      experience: julesKnowledge.experience,
+      associative_experience: julesKnowledge.associative_experience
+    };
   }
 
   // 🎓 SECTION 4: FORMATION & ACTIVITÉS
   if (relevantSections.includes('formation_activites')) {
-    let formationContent = '';
-    
-    // Education
-    if (julesKnowledge.education) {
-      const educationFormatted = julesKnowledge.education
-        .map(edu => `🎓 ${edu.institution || edu.title}: ${edu.title || edu.type} (${edu.period})
-${edu.description || edu.focus || ''}
-Compétences: ${edu.skills_acquired ? edu.skills_acquired.join(', ') : 'N/A'}`)
-        .join('\n\n');
-      formationContent += `🎓 FORMATION:\n${educationFormatted}`;
-    }
+    sectionsData.education_activities = {
+      education: julesKnowledge.education,
+      travel_experience: julesKnowledge.travel_experience,
+      faqs: julesKnowledge.faqs
+    };
+  }
 
-    // Travel experience
-    if (julesKnowledge.travel_experience) {
-      let travelContent = '';
-      if (julesKnowledge.travel_experience.erasmus_programs) {
-        travelContent += julesKnowledge.travel_experience.erasmus_programs
-          .map(prog => `✈️ ${prog.location} (${prog.university}): ${prog.benefits}`)
-          .join('\n');
-      }
-      if (julesKnowledge.travel_experience.language_immersion) {
-        const immersion = julesKnowledge.travel_experience.language_immersion;
-        travelContent += `\n✈️ ${immersion.location} (${immersion.institution}): ${immersion.focus}`;
-      }
-      formationContent += `\n\n🌍 EXPÉRIENCE INTERNATIONALE:\n${travelContent}`;
-    }
-
-    // FAQs
-    if (julesKnowledge.faqs) {
-      const faqsFormatted = julesKnowledge.faqs
-        .map(faq => `❓ ${faq.question}\n💬 ${faq.answer}`)
-        .join('\n\n');
-      formationContent += `\n\n❓ FAQ:\n${faqsFormatted}`;
-    }
-
-    formattedData.formation_activites = formationContent;
+  // 🎯 CONVERSION TOON : encode() des sections sélectionnées
+  const toonFormatted = encode(sectionsData, { delimiter: ',' });
+  
+  // Calcul des tokens économisés (estimation)
+  const jsonEquivalent = JSON.stringify(sectionsData, null, 2);
+  const tokensJSON = Math.ceil(jsonEquivalent.length / 4); // Estimation: ~4 chars = 1 token
+  const tokensTOON = Math.ceil(toonFormatted.length / 4);
+  const tokensSaved = tokensJSON - tokensTOON;
+  const percentageSaved = ((tokensSaved / tokensJSON) * 100).toFixed(1);
+  
+  console.log(`[TOON] � Message utilisateur: "${userMessage}"`);
+  console.log(`[TOON] �🚀 Sections encodées en TOON : ${Object.keys(sectionsData).join(', ')}`);
+  console.log(`[TOON] 📊 Comparaison tokens:`);
+  console.log(`  JSON: ${tokensJSON} tokens (~${jsonEquivalent.length} chars)`);
+  console.log(`  TOON: ${tokensTOON} tokens (~${toonFormatted.length} chars)`);
+  console.log(`  💰 Économisés: ${tokensSaved} tokens (-${percentageSaved}%)`);
+  console.log(`[TOON] 🎯 DONNÉES ENVOYÉES À GEMINI:`);
+  console.log('=====================================');
+  console.log(toonFormatted);
+  console.log('=====================================');
+  
+  // Retourner le format TOON complet pour chaque section demandée
+  const formattedData: any = {};
+  
+  if (relevantSections.includes('profil')) {
+    formattedData.profil = `📋 MES DONNÉES PROFIL (format TOON optimisé):\n${toonFormatted}`;
+  } else {
+    formattedData.profil = "Profil disponible sur demande.";
+  }
+  
+  if (relevantSections.includes('technologies')) {
+    formattedData.technologies = `🛠️ MES TECHNOLOGIES (format TOON optimisé):\n${toonFormatted}`;
+  } else {
+    formattedData.technologies = "Technologies disponibles sur demande.";
+  }
+  
+  if (relevantSections.includes('projets_experience')) {
+    formattedData.projets_experience = `🚀 MES PROJETS & EXPÉRIENCE (format TOON optimisé):\n${toonFormatted}`;
+  } else {
+    formattedData.projets_experience = "Projets et expérience disponibles sur demande.";
+  }
+  
+  if (relevantSections.includes('formation_activites')) {
+    formattedData.formation_activites = `🎓 MA FORMATION & ACTIVITÉS (format TOON optimisé):\n${toonFormatted}`;
   } else {
     formattedData.formation_activites = "Formation et activités disponibles sur demande.";
   }
@@ -427,7 +344,7 @@ export class JulesDigitalTwin {
       const relevantSections = getRelevantSections(message);
       
       // 📦 CONTEXTE OPTIMISÉ : Ne charger que ce qui est nécessaire
-      const knowledgeContext = formatKnowledgeForPrompt(relevantSections);
+      const knowledgeContext = formatKnowledgeForPrompt(relevantSections, message);
       
       console.log(`[Jules AI] Sections chargées: ${relevantSections.join(', ')}`);
       console.log(`[Jules AI] Tokens économisés: ~${Math.round((6 - relevantSections.length) * 150)} tokens`);
